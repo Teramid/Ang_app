@@ -1,4 +1,4 @@
-def dwonload_verb_list():
+def download_verb_list():
     from urllib.request import urlopen
     from bs4 import BeautifulSoup
 
