@@ -1,0 +1,32 @@
+
+<Finish_Window>:
+    canvas.before:
+        Color:
+            rgb: (0.3, 0.3,0.3)
+        Rectangle:
+            size: self.width, self.height
+            pos: self.x, self.y
+    BoxLayout:
+        size_hint: 1060/1080, 1240/1920
+        pos_hint: {'x':15/1080, 'y':300/1920}
+        orientation: "vertical"
+        spacing: 1
+        padding: 5, 5, 5, 5
+        canvas.before:
+            Color:
+                rgb: (0.4,0.4,0.4)
+            Rectangle:
+                size: self.width, self.height
+                pos: self.x, self.y
+        
+        MenuButton:
+            text: "Zagraj jeszcze raz"
+            on_release: root.button_play_again()
+
+        MenuButton:
+            text: "Zmień poziom"
+            on_release: root.button_change_level()
+
+        MenuButton:
+            text: "Menu"
+            on_release: root.button_back_to_menu()

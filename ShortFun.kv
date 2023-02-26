@@ -1,0 +1,52 @@
+<TextAnswer>:
+    write_tab: False
+    multiline: False
+    disabled: False
+    font_size: 20
+    halign: 'center'
+    valign: 'middle'
+
+
+<MyLabel>:
+    color: 0,0,0,1
+    canvas.before:
+        Color:
+            rgb: (0.6,0.6,0.6)
+        Rectangle:
+            size: self.width, self.height
+            pos: self.x, self.y
+
+
+<MenuButton>:
+    font_size: 20
+    canvas.before:
+        Color:
+            rgb: (0.1, 0.1, 0.1)
+
+
+<BackButton>
+    background_normal: 'icons/back_icon.png'
+    background_down: 'icons/back_icon.png'
+    size_hint: None, None
+    size: 100, 100
+    pos_hint: {'x':30/1080, 'y':40/1920}
+    canvas.before:
+        Color:
+            rgb: (0.5,0.1,0.1)
+        RoundedRectangle:
+            size: self.width, self.height
+            pos: self.x, self.y
+            radius: [58]
+
+
+<RightButton>:
+    size_hint: None, None
+    size: 100, 100
+    pos_hint: {'x':830/1080, 'y':40/1920}
+    canvas.before:
+        Color:
+            rgb: (0.1, 0.35, 0.1) if self.state == 'down' else (0.1, 0.5, 0.1)
+        RoundedRectangle:
+            size: self.width, self.height
+            pos: self.x, self.y
+            radius: [58]

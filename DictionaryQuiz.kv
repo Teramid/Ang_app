@@ -1,0 +1,83 @@
+<DictionaryQuiz>:
+    canvas.before:
+        Color:
+            rgb: (0.3, 0.3,0.3)
+        Rectangle:
+            size: self.width, self.height
+            pos: self.x, self.y
+    BoxLayout:
+        size_hint: 1060/1080, 280/1920
+        pos_hint: {'x':15/1080, 'y':1580/1920}
+        spacing: 20
+        padding: 5, 5, 5, 5
+        canvas.before:
+            Color:
+                rgb: (0.4,0.4,0.4)
+            Rectangle:
+                size: self.width, self.height
+                pos: self.x, self.y
+
+        BoxLayout:
+            orientation: 'vertical'
+            spacing:1
+            MyLabel:
+                text: "Pozostałe\npowtórzenia:"
+            MyLabel:
+                id: repeat_quest
+                text: ""
+        BoxLayout:
+            orientation: 'vertical'
+            spacing:1
+            MyLabel:
+                text:"Przyswojone\npytania:"
+            MyLabel:
+                id: full_correct_answer
+                text: ""
+        BoxLayout:
+            orientation: 'vertical'
+            spacing:1
+            MyLabel:
+                text: "Ilość pytań:"
+            MyLabel:
+                id: size_base
+                text: ""
+
+    BoxLayout:
+        size_hint: 1060/1080, 700/1920
+        id: box_dict
+        pos_hint: {'center_x':0.5, 'y':620/1920}
+        orientation: 'vertical'
+        spacing: 20
+        padding: 5, 5, 5, 5
+        canvas.before:
+            Color:
+                rgb: (0.4,0.4,0.4)
+            Rectangle:
+                size: self.width, self.height
+                pos: self.x, self.y
+        MyLabel:
+            id: dict_quest
+            text: "0"
+            font_size: 30
+        TextInput:
+            id: dict_answer
+            write_tab: False
+            multiline: False
+            disabled: False
+            font_size: 30
+            halign: 'center'
+            valign: 'middle'
+        MyLabel:
+            id: correct_widget_dict
+            text: ""
+            font_size: 25
+            opacity: 0
+
+    BackButton:
+        on_press: root.back_button_down()
+
+    RightButton:
+        id: right_button
+        background_normal: 'icons/accept_icon.png'
+        background_down: 'icons/next_icon.png'
+        on_press: root.right_button_down()

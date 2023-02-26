@@ -1,0 +1,168 @@
+<Irregular>:
+    canvas.before:
+        Color:
+            rgb: (0.3, 0.3,0.3)
+        Rectangle:
+            size: self.width, self.height
+            pos: self.x, self.y
+    BoxLayout:
+        size_hint: 1060/1080, 280/1920
+        pos_hint: {'x':15/1080, 'y':1580/1920}
+        spacing: 20
+        padding: 5, 5, 5, 5
+        canvas.before:
+            Color:
+                rgb: (0.4,0.4,0.4)
+            Rectangle:
+                size: self.width, self.height
+                pos: self.x, self.y
+
+        BoxLayout:
+            orientation: 'vertical'
+            spacing:1
+            MyLabel:
+                text: "Pozostałe\npowtórzenia:"
+            MyLabel:
+                id: repeat_quest
+                text: ""
+        BoxLayout:
+            orientation: 'vertical'
+            spacing:1
+            MyLabel:
+                text:"Przyswojone\npytania:"
+            MyLabel:
+                id: full_correct_answer
+                text: ""
+        BoxLayout:
+            orientation: 'vertical'
+            spacing:1
+            MyLabel:
+                text: "Ilość pytań:"
+            MyLabel:
+                id: size_base
+                text: ""
+
+#Question
+    BoxLayout:
+        size_hint: 1050/1080, 260/1920
+        pos_hint: {'x':15/1080, 'y':1200/1920}
+        orientation: "vertical"
+        spacing: 1
+        canvas:
+            Color:
+                rgb: (0.9,0.9,0.9)
+            Rectangle:
+                size: self.width, self.height
+                pos: self.x, self.y
+        BoxLayout:
+            size_hint_y: 0.3
+            spacing: 2
+            canvas:
+                Color:
+                    rgb: (0.6,0.6,0.6)
+                Rectangle:
+                    size: self.width, self.height
+                    pos: self.x, self.y
+            Label:
+                text: "Czasownik"
+                size_hint_x: 1.8
+                pos_hint: {'x':0.5}
+                color: 0,0,0,1
+        Label:
+            id: quest_0
+            text: "0"
+            font_size: 20
+            halign: 'center'
+            valign: 'middle'
+            color: 0,0,0,1
+
+#Answer Box
+    BoxLayout:
+        size_hint: 1060/1080, 840/1920
+        pos_hint: {'x':10/1080, 'y':320/1920}
+        spacing: 20
+        padding: 5, 5, 5, 5
+        orientation:'vertical'
+        canvas:
+            Color:
+                rgb: (0.4,0.4,0.4)
+            Rectangle:
+                size: self.width, self.height
+                pos: self.x, self.y
+
+    #Answer 1
+        BoxLayout:
+            orientation: "vertical"
+            spacing: 1
+            canvas:
+                Color:
+                    rgb: (0.6,0.6,0.6)
+                Rectangle:
+                    size: self.width, self.height
+                    pos: self.x, self.y
+            Label:
+                text: "Bezokolicznik (infinitive):"
+                size_hint_y: 0.3
+                color: 0,0,0,1
+            TextAnswer:
+                id: text_quest_1
+            Label:
+                id: check_answer_1
+                size_hint_y: 0.3
+                text: ''
+                opacity: 0
+
+    #Answer 2
+        BoxLayout:
+            orientation: "vertical"
+            spacing: 1
+            canvas:
+                Color:
+                    rgb: (0.6,0.6,0.6)
+                Rectangle:
+                    size: self.width, self.height
+                    pos: self.x, self.y
+            Label:
+                text: "II forma (past tense):"
+                size_hint_y: 0.3
+                color: 0,0,0,1
+            TextAnswer:
+                id: text_quest_2
+            Label:
+                id: check_answer_2
+                size_hint_y: 0.3
+                text: ''
+                opacity: 0
+
+    #Answer 3
+        BoxLayout:
+            orientation: "vertical"
+            spacing: 1
+            canvas:
+                Color:
+                    rgb: (0.6,0.6,0.6)
+                Rectangle:
+                    size: self.width, self.height
+                    pos: self.x, self.y
+            Label:
+                text: "III forma (past participle):"
+                size_hint_y: 0.3
+                color: 0,0,0,1
+            TextAnswer:
+                id: text_quest_3
+            Label:
+                id: check_answer_3
+                size_hint_y: 0.3
+                text: ''
+                opacity: 0
+
+#left button back/exit
+    BackButton:
+        on_press: root.back_button_down()
+
+#right button accept/next
+    RightButton:
+        id: right_button
+        background_normal: 'icons/accept_icon.png'
+        background_down: 'icons/next_icon.png'
+        on_press: root.right_button_down()
