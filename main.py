@@ -1,3 +1,7 @@
+from kivy.app import App
+from kivy.uix.widget import Widget
+
+
 import os
 from random import randint
 
@@ -56,70 +60,79 @@ def download_verb_list():
     f.close()
 
 
-if os.path.exists("baza") and os.path.isdir("baza"):
-    pass
-else:
-    print("Baza pytań nie istnieje\nJeśli chcesz pobrać wciśnij Enter")
-    enter_press = input()
-    download_verb_list()
-
-files = os.listdir("baza")
-Files_Number = len(files)
-dict = {}
-for nr, x in enumerate(files):
-    file_name = "baza/" + x
-    f = open(file_name, "r")
-    f = f.readlines()
-    dict.update(
-        {nr + 1: [f[0].rstrip(), f[1].rstrip(), f[2].rstrip(), f[3], file_name[5:]]}
-    )
-
-
-dictNumber = {}
-for i in range(1, Files_Number + 1):
-    dictNumber.update({i: 1})
-form_name = [
-    "Bezokolicznik (infinitive): ",
-    "II forma (past tense): ",
-    "III forma (past participle): ",
-]
-full_Answer = 0
-while True:
-    os.system("cls")
-    if full_Answer == Files_Number:
-        print("Po nauce czas na piwo :)")
-        wait_press = input("Enter, aby wyjść...")
-        break
-
+def verb_unregular_qa():
+    if os.path.exists("baza") and os.path.isdir("baza"):
+        pass
     else:
-        choose_File = int(randint(1, Files_Number))
-        if dictNumber.get(choose_File) == 0:
-            continue
-        else:
-            print("Ilosć pytań w bazie:", str(Files_Number))
-            print("Przyswojone pytania: ", full_Answer, "/", Files_Number)
+        print("Baza pytań nie istnieje\nJeśli chcesz pobrać wciśnij Enter")
+        enter_press = input()
+        download_verb_list()
 
-            print("Pytanie:", dict[choose_File][4])
-            print("pozostałych powtórzeń pytania:", dictNumber.get(choose_File))
-            print("")
-            print("Czasownik:", dict[choose_File][3])
-            correct_Answer = 0
-            # print(len(dict[choose_File]))
-            # print(dict[choose_File])
-            for i in range(len(dict[choose_File]) - 2):
-                if input(form_name[i]) in dict[choose_File][i].split():
-                    print("Correct")
-                    correct_Answer += 1
+    files = os.listdir("baza")
+    Files_Number = len(files)
+    dict = {}
+    for nr, x in enumerate(files):
+        file_name = "baza/" + x
+        f = open(file_name, "r")
+        f = f.readlines()
+        dict.update(
+            {nr + 1: [f[0].rstrip(), f[1].rstrip(), f[2].rstrip(), f[3], file_name[5:]]}
+        )
+
+    dictNumber = {}
+    for i in range(1, Files_Number + 1):
+        dictNumber.update({i: 1})
+    form_name = [
+        "Bezokolicznik (infinitive): ",
+        "II forma (past tense): ",
+        "III forma (past participle): ",
+    ]
+    full_Answer = 0
+    while True:
+        os.system("cls")
+        if full_Answer == Files_Number:
+            print("Po nauce czas na piwo :)")
+            wait_press = input("Enter, aby wyjść...")
+            break
+
+        else:
+            choose_File = int(randint(1, Files_Number))
+            if dictNumber.get(choose_File) == 0:
+                continue
+            else:
+                print("Ilosć pytań w bazie:", str(Files_Number))
+                print("Przyswojone pytania: ", full_Answer, "/", Files_Number)
+
+                print("Pytanie:", dict[choose_File][4])
+                print("pozostałych powtórzeń pytania:", dictNumber.get(choose_File))
+                print("")
+                print("Czasownik:", dict[choose_File][3])
+                correct_Answer = 0
+                # print(len(dict[choose_File]))
+                # print(dict[choose_File])
+                for i in range(len(dict[choose_File]) - 2):
+                    if input(form_name[i]) in dict[choose_File][i].split():
+                        print("Correct")
+                        correct_Answer += 1
+                    else:
+                        print("Uncorrect, should be: ", dict[choose_File][i])
+                wait_press = input("\nEnter, aby przejść do następnego...")
+                x = dictNumber.get(choose_File)
+                if correct_Answer >= 3:
+                    x -= 1
                 else:
-                    print("Uncorrect, should be: ", dict[choose_File][i])
-            wait_press = input("\nEnter, aby przejść do następnego...")
-            x = dictNumber.get(choose_File)
-            if correct_Answer >= 3:
-                x -= 1
-            else:
-                x -= 1
-            dictNumber.update({choose_File: x})
-            if x == 0:
-                full_Answer += 1
-            else:
-                pass
+                    x += 2
+                dictNumber.update({choose_File: x})
+                if x == 0:
+                    full_Answer += 1
+                else:
+                    pass
+
+
+class MainApp(App):
+    def build(self):
+        return Widget()
+
+
+if __name__ == "__main__":
+    MainApp().run()
