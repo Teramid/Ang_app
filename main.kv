@@ -1,6 +1,4 @@
 <Main>:
-    orientation: 'vertical'
-    size: 540, 960
     canvas.before:
         Color:
             rgb: (0.3, 0.3,0.3)
@@ -8,49 +6,104 @@
             size: self.width, self.height
             pos: self.x, self.y
     BoxLayout:
-        size_hint: 1060/1080, 330/1920
+        size_hint: 1060/1080, 280/1920
         pos_hint: {'x':15/1080, 'y':1580/1920}
         spacing: 20
         padding: 5, 5, 5, 5
-        canvas:
+        canvas.before:
             Color:
                 rgb: (0.4,0.4,0.4)
             Rectangle:
                 size: self.width, self.height
                 pos: self.x, self.y
+
+        BoxLayout:
+            orientation: 'vertical'
+            spacing:1
+            Label:
+                text:"Pozostałe\npowtórzenia:"
+                color: 0,0,0,1 
+                canvas.before:
+                    Color:
+                        rgb: (0.6,0.6,0.6)
+                    Rectangle:
+                        size: self.width, self.height
+                        pos: self.x, self.y
+            Label:
+                text:root.repteat_quest
+                color: 0,0,0,1 
+                canvas.before:
+                    Color:
+                        rgb: (0.6,0.6,0.6)
+                    Rectangle:
+                        size: self.width, self.height
+                        pos: self.x, self.y
         
-        Widget:
-            canvas:
-                Color:
-                    rgb: (0.6,0.6,0.6)
-                Rectangle:
-                    size: self.width, self.height
-                    pos: self.x, self.y
-        Widget:
-            canvas:
-                Color:
-                    rgb: (0.6,0.6,0.6)
-                Rectangle:
-                    size: self.width, self.height
-                    pos: self.x, self.y
+        BoxLayout:
+            orientation: 'vertical'
+            spacing:1
+            Label:
+                text:"Przyswojone\npytania:"
+                color: 0,0,0,1 
+                canvas.before:
+                    Color:
+                        rgb: (0.6,0.6,0.6)
+                    Rectangle:
+                        size: self.width, self.height
+                        pos: self.x, self.y
+            Label:
+                text:root.full_correct_answer
+                color: 0,0,0,1 
+                canvas.before:
+                    Color:
+                        rgb: (0.6,0.6,0.6)
+                    Rectangle:
+                        size: self.width, self.height
+                        pos: self.x, self.y
+                    
+        BoxLayout:
+            orientation: 'vertical'
+            spacing:1
+            Label:
+                text:"Ilość pytań:"
+                color: 0,0,0,1 
+                canvas.before:
+                    Color:
+                        rgb: (0.6,0.6,0.6)
+                    Rectangle:
+                        size: self.width, self.height
+                        pos: self.x, self.y
+            Label:
+                text:root.size_base
+                color: 0,0,0,1 
+                canvas.before:
+                    Color:
+                        rgb: (0.6,0.6,0.6)
+                    Rectangle:
+                        size: self.width, self.height
+                        pos: self.x, self.y
 
-        Widget:
-            canvas:
-                Color:
-                    rgb: (0.6,0.6,0.6)
-                Rectangle:
-                    size: self.width, self.height
-                    pos: self.x, self.y
+    
 
-    Widget:
+    BoxLayout:
         size_hint: 1050/1080, 260/1920
         pos_hint: {'x':15/1080, 'y':1200/1920}
+        orientation: "vertical"
+        spacing: 1
         canvas:
             Color:
                 rgb: (0.6,0.6,0.6)
             Rectangle:
                 size: self.width, self.height
                 pos: self.x, self.y
+        Label:
+            text: "Czasownik"
+            size_hint_y: 0.3
+            color: 0,0,0,1
+        Label:
+            text: root.quest_0
+            size_hint_y: 0.3
+            color: 0,0,0,1 
 
     BoxLayout:
         size_hint: 1060/1080, 840/1920
@@ -65,46 +118,81 @@
                 size: self.width, self.height
                 pos: self.x, self.y
 
-        Widget:
+        BoxLayout:
+            orientation: "vertical"
+            spacing: 1
             canvas:
                 Color:
                     rgb: (0.6,0.6,0.6)
                 Rectangle:
                     size: self.width, self.height
                     pos: self.x, self.y
+            Label:
+                text: root.quest_1
+                size_hint_y: 0.3
+                color: 0,0,0,1
+            TextInput:
+                id: text_quest_1
+                multiline: False
+                disabled: False
         
-        Widget:
+        BoxLayout:
+            orientation: "vertical"
+            spacing: 1
             canvas:
                 Color:
                     rgb: (0.6,0.6,0.6)
                 Rectangle:
                     size: self.width, self.height
                     pos: self.x, self.y
+            Label:
+                text: root.quest_2
+                size_hint_y: 0.3
+                color: 0,0,0,1
+            TextInput:
+                id: text_quest_2
+                multiline: False
+                disabled: False
 
-        Widget:
+        BoxLayout:
+            orientation: "vertical"
+            spacing: 1
             canvas:
                 Color:
                     rgb: (0.6,0.6,0.6)
                 Rectangle:
                     size: self.width, self.height
                     pos: self.x, self.y
-    
-    Widget:
+            Label:
+                text: root.quest_3
+                size_hint_y: 0.3
+                color: 0,0,0,1
+            TextInput:
+                id: text_quest_3
+                multiline: False
+                disabled: False
+    Button:
+        id: left_button
+        background_normal: 'icons/back_icon.png'
         size_hint: 220/1080, 220/1920
         pos_hint: {'x':30/1080, 'y':40/1920}
-        canvas:
+        on_press: root.back_button_down()
+        canvas.before:
             Color:
-                rgb: (0.6,0.6,0.6)
-            Ellipse:
+                rgb: (0.5,0.1,0.1)
+            Rectangle:
                 size: self.width, self.height
                 pos: self.x, self.y
 
-    Widget:
+    Button:
+        id: right_button
+        background_normal: 'icons/accept_icon.png'
+        on_press: root.accept_button_down()
         size_hint: 220/1080, 220/1920
         pos_hint: {'x':830/1080, 'y':40/1920}
-        canvas:
+        canvas.before:
             Color:
                 rgb: (0.1,0.5,0.1)
-            Ellipse:
+            Rectangle:
                 size: self.width, self.height
                 pos: self.x, self.y

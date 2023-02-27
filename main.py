@@ -1,6 +1,9 @@
 from kivy.app import App
 from kivy.uix.floatlayout import FloatLayout
-
+from kivy.uix.textinput import TextInput
+from kivy.config import Config
+from kivy.core.window import Window
+from kivy.properties import StringProperty
 
 import os
 from random import randint
@@ -129,15 +132,37 @@ def verb_unregular_qa():
                     pass
 
 
-from kivy.config import Config
-from kivy.core.window import Window
+quest = []
+form_name = [
+    "Bezokolicznik (infinitive): ",
+    "II forma (past tense): ",
+    "III forma (past participle): ",
+]
 
 Window.size = (450, 800)
 Config.set("graphics", "resizable", False)
 
 
 class Main(FloatLayout):
-    pass
+    repteat_quest = StringProperty("2")
+    full_correct_answer = StringProperty("22/139")
+    size_base = StringProperty("139")
+    quest_0 = StringProperty("Pytanie")
+    quest_1 = StringProperty(form_name[0])
+    quest_2 = StringProperty(form_name[1])
+    quest_3 = StringProperty(form_name[2])
+
+    def accept_button_down(self):
+        print("Akceptuj")
+        print(self.ids.text_quest_1.text)
+        print(self.ids.text_quest_2.text)
+        print(self.ids.text_quest_3.text)
+        for text_input_string in self.ids.values():
+            if isinstance(text_input_string, TextInput):
+                text_input_string.text = ""
+
+    def back_button_down(self):
+        exit()
 
 
 class MainApp(App):
