@@ -1,0 +1,110 @@
+<Main>:
+    orientation: 'vertical'
+    size: 540, 960
+    canvas.before:
+        Color:
+            rgb: (0.3, 0.3,0.3)
+        Rectangle:
+            size: self.width, self.height
+            pos: self.x, self.y
+    BoxLayout:
+        size_hint: 1060/1080, 330/1920
+        pos_hint: {'x':15/1080, 'y':1580/1920}
+        spacing: 20
+        padding: 5, 5, 5, 5
+        canvas:
+            Color:
+                rgb: (0.4,0.4,0.4)
+            Rectangle:
+                size: self.width, self.height
+                pos: self.x, self.y
+        
+        Widget:
+            canvas:
+                Color:
+                    rgb: (0.6,0.6,0.6)
+                Rectangle:
+                    size: self.width, self.height
+                    pos: self.x, self.y
+        Widget:
+            canvas:
+                Color:
+                    rgb: (0.6,0.6,0.6)
+                Rectangle:
+                    size: self.width, self.height
+                    pos: self.x, self.y
+
+        Widget:
+            canvas:
+                Color:
+                    rgb: (0.6,0.6,0.6)
+                Rectangle:
+                    size: self.width, self.height
+                    pos: self.x, self.y
+
+    Widget:
+        size_hint: 1050/1080, 260/1920
+        pos_hint: {'x':15/1080, 'y':1200/1920}
+        canvas:
+            Color:
+                rgb: (0.6,0.6,0.6)
+            Rectangle:
+                size: self.width, self.height
+                pos: self.x, self.y
+
+    BoxLayout:
+        size_hint: 1060/1080, 840/1920
+        pos_hint: {'x':10/1080, 'y':320/1920}
+        spacing: 20
+        padding: 5, 5, 5, 5
+        orientation:'vertical'
+        canvas:
+            Color:
+                rgb: (0.4,0.4,0.4)
+            Rectangle:
+                size: self.width, self.height
+                pos: self.x, self.y
+
+        Widget:
+            canvas:
+                Color:
+                    rgb: (0.6,0.6,0.6)
+                Rectangle:
+                    size: self.width, self.height
+                    pos: self.x, self.y
+        
+        Widget:
+            canvas:
+                Color:
+                    rgb: (0.6,0.6,0.6)
+                Rectangle:
+                    size: self.width, self.height
+                    pos: self.x, self.y
+
+        Widget:
+            canvas:
+                Color:
+                    rgb: (0.6,0.6,0.6)
+                Rectangle:
+                    size: self.width, self.height
+                    pos: self.x, self.y
+    
+    Widget:
+        size_hint: 220/1080, 220/1920
+        pos_hint: {'x':30/1080, 'y':40/1920}
+        canvas:
+            Color:
+                rgb: (0.6,0.6,0.6)
+            Ellipse:
+                size: self.width, self.height
+                pos: self.x, self.y
+
+    Widget:
+        size_hint: 220/1080, 220/1920
+        pos_hint: {'x':830/1080, 'y':40/1920}
+        canvas:
+            Color:
+                rgb: (0.1,0.5,0.1)
+            Ellipse:
+                size: self.width, self.height
+                pos: self.x, self.y

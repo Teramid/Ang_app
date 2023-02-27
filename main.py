@@ -1,5 +1,5 @@
 from kivy.app import App
-from kivy.uix.widget import Widget
+from kivy.uix.floatlayout import FloatLayout
 
 
 import os
@@ -129,9 +129,20 @@ def verb_unregular_qa():
                     pass
 
 
+from kivy.config import Config
+from kivy.core.window import Window
+
+Window.size = (450, 800)
+Config.set("graphics", "resizable", False)
+
+
+class Main(FloatLayout):
+    pass
+
+
 class MainApp(App):
     def build(self):
-        return Widget()
+        return Main()
 
 
 if __name__ == "__main__":
