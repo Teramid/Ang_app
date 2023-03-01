@@ -4,6 +4,8 @@ from kivy.uix.textinput import TextInput
 from kivy.config import Config
 from kivy.core.window import Window
 from kivy.properties import StringProperty
+from kivy.uix.button import Button
+
 
 import os
 from random import randint
@@ -63,7 +65,7 @@ def download_verb_list():
     f.close()
 
 
-def verb_unregular_qa():
+def check_path_base():
     if os.path.exists("baza") and os.path.isdir("baza"):
         pass
     else:
@@ -71,6 +73,8 @@ def verb_unregular_qa():
         enter_press = input()
         download_verb_list()
 
+
+def make_dict_and_index(repeat=3):
     files = os.listdir("baza")
     Files_Number = len(files)
     dict = {}
@@ -84,12 +88,57 @@ def verb_unregular_qa():
 
     dictNumber = {}
     for i in range(1, Files_Number + 1):
-        dictNumber.update({i: 1})
-    form_name = [
-        "Bezokolicznik (infinitive): ",
-        "II forma (past tense): ",
-        "III forma (past participle): ",
-    ]
+        dictNumber.update({i: repeat})
+
+    return Files_Number, dict, dictNumber
+
+
+def random_verb(dictNumber, Files_Number):
+    x = True
+    while x:
+        choose_File = int(randint(1, Files_Number))
+        if dictNumber.get(choose_File) == 0:
+            continue
+        else:
+            return choose_File
+
+
+def check_correct_answer(
+    Answer_1, Answer_2, Answer_3, choose_File, dict, dictNumber, Full_Answer
+):
+    if Answer_1 in dict[choose_File][0].split():
+        Answer_Correct_1 = True
+    else:
+        Answer_Correct_1 = False
+
+    if Answer_2 in dict[choose_File][1].split():
+        Answer_Correct_2 = True
+    else:
+        Answer_Correct_2 = False
+
+    if Answer_3 in dict[choose_File][0].split():
+        Answer_Correct_3 = True
+    else:
+        Answer_Correct_3 = False
+    x = dictNumber.get(choose_File)
+    if Answer_Correct_1 and Answer_Correct_2 and Answer_Correct_3:
+        x -= 1
+    else:
+        x += 1
+    dictNumber.update({choose_File: x})
+    if x == 0:
+        Full_Answer += 1
+    else:
+        pass
+
+    return Answer_Correct_1, Answer_Correct_2, Answer_Correct_3, dictNumber, Full_Answer
+
+
+"""def verb_unregular_qa():
+    print(check_path_base())
+
+    Files_Number,dict,dictNumber = make_dict_and_index()
+    
     full_Answer = 0
     while True:
         os.system("cls")
@@ -129,7 +178,7 @@ def verb_unregular_qa():
                 if x == 0:
                     full_Answer += 1
                 else:
-                    pass
+                    pass"""
 
 
 quest = []
@@ -141,16 +190,28 @@ form_name = [
 
 Window.size = (450, 800)
 Config.set("graphics", "resizable", False)
+check_path_base()
+Files_Number, dict, dictNumber = make_dict_and_index()
 
 
 class Main(FloatLayout):
-    repteat_quest = StringProperty("2")
-    full_correct_answer = StringProperty("22/139")
-    size_base = StringProperty("139")
-    quest_0 = StringProperty("Pytanie")
+    choose_File = random_verb(dictNumber, Files_Number)
+    Full_Answer = 0
+    Full_Ans_Str = str(Full_Answer) + "/" + str(Files_Number)
+    repteat_quest = StringProperty(str(dictNumber.get(choose_File)))
+    full_correct_answer = StringProperty(Full_Ans_Str)
+    size_base = StringProperty(str(Files_Number))
+    quest_file = StringProperty(str(dict[choose_File][4]))
+    quest_0 = StringProperty(str(dict[choose_File][3]))
     quest_1 = StringProperty(form_name[0])
     quest_2 = StringProperty(form_name[1])
     quest_3 = StringProperty(form_name[2])
+
+    def right_button_down(self):
+        if self.ids.right_button.background_normal == "icons/accept_icon.png":
+            self.accept_button_down()
+        else:
+            self.next_button_down()
 
     def accept_button_down(self):
         print("Akceptuj")
@@ -160,6 +221,18 @@ class Main(FloatLayout):
         for text_input_string in self.ids.values():
             if isinstance(text_input_string, TextInput):
                 text_input_string.text = ""
+
+    def next_button_down(self):
+        print("Następny")
+        choose_File = random_verb(dictNumber, Files_Number)
+        self.repteat_quest = str(dictNumber.get(choose_File))
+        self.full_correct_answer = self.Full_Ans_Str
+        self.size_base = str(Files_Number)
+        self.quest_file = str(dict[choose_File][4])
+        self.quest_0 = str(dict[choose_File][3])
+        self.quest_1 = form_name[0]
+        self.quest_2 = form_name[1]
+        self.quest_3 = form_name[2]
 
     def back_button_down(self):
         exit()

@@ -84,7 +84,7 @@
                         pos: self.x, self.y
 
     
-
+#Question
     BoxLayout:
         size_hint: 1050/1080, 260/1920
         pos_hint: {'x':15/1080, 'y':1200/1920}
@@ -92,19 +92,33 @@
         spacing: 1
         canvas:
             Color:
-                rgb: (0.6,0.6,0.6)
+                rgb: (0.9,0.9,0.9)
             Rectangle:
                 size: self.width, self.height
                 pos: self.x, self.y
-        Label:
-            text: "Czasownik"
+        BoxLayout:
             size_hint_y: 0.3
-            color: 0,0,0,1
+            spacing: 2
+            canvas:
+                Color:
+                    rgb: (0.6,0.6,0.6)
+                Rectangle:
+                    size: self.width, self.height
+                    pos: self.x, self.y
+            Label:
+                text: "Czasownik"
+                size_hint_x: 1.8
+                pos_hint: {'x':0.5}
+                color: 0,0,0,1
+            Label:
+                text: root.quest_file
+                color: 0,0,0,1
         Label:
             text: root.quest_0
-            size_hint_y: 0.3
-            color: 0,0,0,1 
+            color: 0,0,0,1
+            
 
+#Answer Box
     BoxLayout:
         size_hint: 1060/1080, 840/1920
         pos_hint: {'x':10/1080, 'y':320/1920}
@@ -118,6 +132,7 @@
                 size: self.width, self.height
                 pos: self.x, self.y
 
+    #Answer 1
         BoxLayout:
             orientation: "vertical"
             spacing: 1
@@ -135,7 +150,8 @@
                 id: text_quest_1
                 multiline: False
                 disabled: False
-        
+
+    #Answer 2       
         BoxLayout:
             orientation: "vertical"
             spacing: 1
@@ -154,6 +170,7 @@
                 multiline: False
                 disabled: False
 
+    #Answer 3
         BoxLayout:
             orientation: "vertical"
             spacing: 1
@@ -171,6 +188,8 @@
                 id: text_quest_3
                 multiline: False
                 disabled: False
+
+#left button back/exit
     Button:
         id: left_button
         background_normal: 'icons/back_icon.png'
@@ -184,15 +203,24 @@
                 size: self.width, self.height
                 pos: self.x, self.y
 
+#right button accept/next
     Button:
         id: right_button
         background_normal: 'icons/accept_icon.png'
-        on_press: root.accept_button_down()
+        background_down: 'icons/next_icon.png'
+        on_release: self.background_normal, self.background_down = self.background_down, self.background_normal 
+        on_press: root.right_button_down()
         size_hint: 220/1080, 220/1920
         pos_hint: {'x':830/1080, 'y':40/1920}
         canvas.before:
             Color:
-                rgb: (0.1,0.5,0.1)
+                rgb: (0.1, 0.35, 0.1) if self.state == 'down' else (0.1, 0.5, 0.1)
             Rectangle:
                 size: self.width, self.height
                 pos: self.x, self.y
+
+
+
+
+
+
