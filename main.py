@@ -69,12 +69,10 @@ def check_path_base():
     if os.path.exists("baza") and os.path.isdir("baza"):
         pass
     else:
-        print("Baza pytań nie istnieje\nJeśli chcesz pobrać wciśnij Enter")
-        enter_press = input()
         download_verb_list()
 
 
-def make_dict_and_index(repeat=3):
+def make_dict_and_index(repeat=1):
     files = os.listdir("baza")
     Files_Number = len(files)
     dict = {}
@@ -103,25 +101,20 @@ def random_verb(dictNumber, Files_Number):
             return choose_File
 
 
-def check_correct_answer(
-    Answer_1, Answer_2, Answer_3, choose_File, dict, dictNumber, Full_Answer
-):
-    if Answer_1 in dict[choose_File][0].split():
-        Answer_Correct_1 = True
-    else:
-        Answer_Correct_1 = False
+def check_correct_answer(Answer, choose_File, dict, dictNumber, Full_Answer):
+    Answer_Correct = []
+    for i in range(len(Answer)):
+        if (
+            Answer[i].strip() in dict[choose_File][i].split(", ")
+            or Answer[i].strip() in dict[choose_File][i].split()
+            or Answer[i].strip() == dict[choose_File][i]
+        ):
+            Answer_Correct.append(True)
+        else:
+            Answer_Correct.append(False)
 
-    if Answer_2 in dict[choose_File][1].split():
-        Answer_Correct_2 = True
-    else:
-        Answer_Correct_2 = False
-
-    if Answer_3 in dict[choose_File][0].split():
-        Answer_Correct_3 = True
-    else:
-        Answer_Correct_3 = False
     x = dictNumber.get(choose_File)
-    if Answer_Correct_1 and Answer_Correct_2 and Answer_Correct_3:
+    if False not in Answer_Correct:
         x -= 1
     else:
         x += 1
@@ -131,7 +124,7 @@ def check_correct_answer(
     else:
         pass
 
-    return Answer_Correct_1, Answer_Correct_2, Answer_Correct_3, dictNumber, Full_Answer
+    return Answer_Correct, dictNumber, Full_Answer
 
 
 """def verb_unregular_qa():
@@ -192,12 +185,12 @@ Window.size = (450, 800)
 Config.set("graphics", "resizable", False)
 check_path_base()
 Files_Number, dict, dictNumber = make_dict_and_index()
+choose_File = random_verb(dictNumber, Files_Number)
+Full_Answer = 0
+Full_Ans_Str = str(Full_Answer) + "/" + str(Files_Number)
 
 
 class Main(FloatLayout):
-    choose_File = random_verb(dictNumber, Files_Number)
-    Full_Answer = 0
-    Full_Ans_Str = str(Full_Answer) + "/" + str(Files_Number)
     repteat_quest = StringProperty(str(dictNumber.get(choose_File)))
     full_correct_answer = StringProperty(Full_Ans_Str)
     size_base = StringProperty(str(Files_Number))
@@ -213,20 +206,79 @@ class Main(FloatLayout):
         else:
             self.next_button_down()
 
-    def accept_button_down(self):
-        print("Akceptuj")
-        print(self.ids.text_quest_1.text)
-        print(self.ids.text_quest_2.text)
-        print(self.ids.text_quest_3.text)
+    def check_label_change(self, bool_ans, answer_id, text_id, number):
+        if bool_ans:
+            answer_id.text = "Correct"
+            answer_id.color = (0, 0.7, 0, 1)
+            text_id.disabled = True
+            answer_id.opacity = 1
+        else:
+            should = "Should be " + dict[choose_File][number]
+            answer_id.text = should
+            answer_id.color = (0.7, 0, 0, 1)
+            text_id.disabled = True
+            answer_id.opacity = 1
+
+    def normal_label_state(self):
+        self.ids.text_quest_1.text = ""
+        self.ids.check_answer_1.opacity = 0
+        self.ids.check_answer_1.color = (1, 1, 1, 1)
+        self.ids.text_quest_1.disabled = False
+
+        self.ids.text_quest_2.text = ""
+        self.ids.check_answer_2.opacity = 0
+        self.ids.check_answer_2.color = (1, 1, 1, 1)
+        self.ids.text_quest_2.disabled = False
+
+        self.ids.text_quest_3.text = ""
+        self.ids.check_answer_3.opacity = 0
+        self.ids.check_answer_3.color = (1, 1, 1, 1)
+        self.ids.text_quest_3.disabled = False
+
         for text_input_string in self.ids.values():
             if isinstance(text_input_string, TextInput):
                 text_input_string.text = ""
 
+    def accept_button_down(self):
+        Answer = []
+        Answer.append(self.ids.text_quest_1.text)
+        Answer.append(self.ids.text_quest_2.text)
+        Answer.append(self.ids.text_quest_3.text)
+        global Full_Answer
+        global dictNumber
+        Answer_Correct, dictNumber, Full_Answer = check_correct_answer(
+            Answer, choose_File, dict, dictNumber, Full_Answer
+        )
+        text_input = [
+            self.ids.text_quest_1,
+            self.ids.text_quest_2,
+            self.ids.text_quest_3,
+        ]
+        check_answer = [
+            self.ids.check_answer_1,
+            self.ids.check_answer_2,
+            self.ids.check_answer_3,
+        ]
+        if False not in Answer_Correct:
+            for i in range(len(text_input)):
+                self.check_label_change(
+                    Answer_Correct[i], check_answer[i], text_input[i], i
+                )
+        else:
+            for i in range(len(text_input)):
+                self.check_label_change(
+                    Answer_Correct[i], check_answer[i], text_input[i], i
+                )
+        global Full_Ans_Str
+        Full_Ans_Str = str(Full_Answer) + "/" + str(Files_Number)
+        self.full_correct_answer = Full_Ans_Str
+        self.repteat_quest = str(dictNumber.get(choose_File))
+
     def next_button_down(self):
-        print("Następny")
+        self.normal_label_state()
+        global choose_File
         choose_File = random_verb(dictNumber, Files_Number)
         self.repteat_quest = str(dictNumber.get(choose_File))
-        self.full_correct_answer = self.Full_Ans_Str
         self.size_base = str(Files_Number)
         self.quest_file = str(dict[choose_File][4])
         self.quest_0 = str(dict[choose_File][3])

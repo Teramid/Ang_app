@@ -150,6 +150,11 @@
                 id: text_quest_1
                 multiline: False
                 disabled: False
+            Label:
+                id: check_answer_1
+                size_hint_y: 0.3
+                text: ''
+                opacity: 0
 
     #Answer 2       
         BoxLayout:
@@ -169,6 +174,11 @@
                 id: text_quest_2
                 multiline: False
                 disabled: False
+            Label:
+                id: check_answer_2
+                size_hint_y: 0.3
+                text: ''
+                opacity: 0
 
     #Answer 3
         BoxLayout:
@@ -188,6 +198,11 @@
                 id: text_quest_3
                 multiline: False
                 disabled: False
+            Label:
+                id: check_answer_3
+                size_hint_y: 0.3
+                text: ''
+                opacity: 0
 
 #left button back/exit
     Button:
@@ -202,6 +217,7 @@
             Rectangle:
                 size: self.width, self.height
                 pos: self.x, self.y
+        
 
 #right button accept/next
     Button:
@@ -219,8 +235,7 @@
                 size: self.width, self.height
                 pos: self.x, self.y
 
-
-
+    
 
 
 
