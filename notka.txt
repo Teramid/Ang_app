@@ -1,4 +1,4 @@
 Dodaj 
-    sprawdzenie czy odpowiedź jest poprawna
+
     okno na temat braku bazy
     

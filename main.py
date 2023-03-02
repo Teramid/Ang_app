@@ -72,7 +72,7 @@ def check_path_base():
         download_verb_list()
 
 
-def make_dict_and_index(repeat=1):
+def make_dict_and_index(repeat=3):
     files = os.listdir("baza")
     Files_Number = len(files)
     dict = {}
@@ -80,6 +80,10 @@ def make_dict_and_index(repeat=1):
         file_name = "baza/" + x
         f = open(file_name, "r")
         f = f.readlines()
+        if len(f[3].split(", ")) > 3:
+            list = f[3].split(", ")
+            list[3] = "\n" + list[3]
+            f[3] = ", ".join(verb for verb in list)
         dict.update(
             {nr + 1: [f[0].rstrip(), f[1].rstrip(), f[2].rstrip(), f[3], file_name[5:]]}
         )
@@ -199,6 +203,21 @@ class Main(FloatLayout):
     quest_1 = StringProperty(form_name[0])
     quest_2 = StringProperty(form_name[1])
     quest_3 = StringProperty(form_name[2])
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        Window.bind(on_key_down=self.handle_keypress)
+
+    def handle_keypress(self, window, keycode, *args):
+        if isinstance(keycode, int) and keycode == 13:
+            self.right_button_down()
+            self.ids.right_button.release = (
+                self.ids.right_button.background_normal,
+                self.ids.right_button.background_down,
+            ) = (
+                self.ids.right_button.background_down,
+                self.ids.right_button.background_normal,
+            )
 
     def right_button_down(self):
         if self.ids.right_button.background_normal == "icons/accept_icon.png":
