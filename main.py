@@ -5,6 +5,7 @@ from kivy.config import Config
 from kivy.core.window import Window
 from kivy.properties import StringProperty
 from kivy.uix.button import Button
+from kivy.clock import Clock
 
 
 import os
@@ -109,9 +110,9 @@ def check_correct_answer(Answer, choose_File, dict, dictNumber, Full_Answer):
     Answer_Correct = []
     for i in range(len(Answer)):
         if (
-            Answer[i].strip() in dict[choose_File][i].split(", ")
-            or Answer[i].strip() in dict[choose_File][i].split()
-            or Answer[i].strip() == dict[choose_File][i]
+            Answer[i].strip().lower() in dict[choose_File][i].split(", ")
+            or Answer[i].strip().lower() in dict[choose_File][i].split()
+            or Answer[i].strip().lower() == dict[choose_File][i]
         ):
             Answer_Correct.append(True)
         else:
@@ -207,6 +208,7 @@ class Main(FloatLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         Window.bind(on_key_down=self.handle_keypress)
+        self.ids.text_quest_1.focus = True
 
     def handle_keypress(self, window, keycode, *args):
         if isinstance(keycode, int) and keycode == 13:
@@ -293,6 +295,9 @@ class Main(FloatLayout):
         self.full_correct_answer = Full_Ans_Str
         self.repteat_quest = str(dictNumber.get(choose_File))
 
+    def set_focus_text_quest_1(self, dt):
+        self.ids.text_quest_1.focus = True
+
     def next_button_down(self):
         self.normal_label_state()
         global choose_File
@@ -304,6 +309,7 @@ class Main(FloatLayout):
         self.quest_1 = form_name[0]
         self.quest_2 = form_name[1]
         self.quest_3 = form_name[2]
+        Clock.schedule_once(self.set_focus_text_quest_1, 0.1)
 
     def back_button_down(self):
         exit()
