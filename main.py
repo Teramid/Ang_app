@@ -47,7 +47,7 @@ def download_verb_list():
             word_list[nr] = word
         if word_list[nr] == "awake":
             level = 1
-        elif word_list[nr] == "bind":
+        elif word_list[nr] == "arise":
             level = 2
         else:
             pass
@@ -71,7 +71,7 @@ def download_verb_list():
             print(x)
             if x[0] == "awake":
                 level_verbs = "B"
-            elif x[0] == "bind":
+            elif x[0] == "arise":
                 level_verbs = "C"
             else:
                 pass
@@ -159,13 +159,13 @@ def check_correct_answer(Answer, choose_File, dict, dictNumber, Full_Answer):
     return Answer_Correct, dictNumber, Full_Answer
 
 
-def Irregular_check_database(level):
+def Irregular_check_database(repeat, level):
     check_path_base()
     global Files_Number, dict, dictNumber, choose_File, Full_Answer, Full_Ans_Str, form_name
-    Files_Number, dict, dictNumber = make_dict_and_index(3, level)
+    Files_Number, dict, dictNumber = make_dict_and_index(repeat, level)
     choose_File = random_verb(dictNumber, Files_Number)
     Full_Answer = 0
-    Full_Ans_Str = str(Full_Answer) + "/" + str(Files_Number)
+    Full_Ans_Str = f"{Full_Answer}/{Files_Number}"
     form_name = [
         "Bezokolicznik (infinitive): ",
         "II forma (past tense): ",
@@ -196,23 +196,33 @@ def Irregular_remove_database():
 
 
 level_choose = "C"
+repeat = 1
 
 
 class Irregular(FloatLayout):
-    Irregular_check_database(level_choose)
-    repteat_quest = StringProperty(str(dictNumber.get(choose_File)))
-    full_correct_answer = StringProperty(Full_Ans_Str)
-    size_base = StringProperty(str(Files_Number))
-    quest_file = StringProperty(str(dict[choose_File][4]))
-    quest_0 = StringProperty(str(dict[choose_File][3]))
-    quest_1 = StringProperty(form_name[0])
-    quest_2 = StringProperty(form_name[1])
-    quest_3 = StringProperty(form_name[2])
+    Irregular_check_database(repeat, level_choose)
+    repteat_quest = StringProperty("0")
+    full_correct_answer = StringProperty("0")
+    size_base = StringProperty("0")
+    quest_file = StringProperty("0")
+    quest_0 = StringProperty("0")
+    quest_1 = StringProperty("0")
+    quest_2 = StringProperty("0")
+    quest_3 = StringProperty("0")
 
     def set_focus_text_quest_1(self, dt):
         self.ids.text_quest_1.focus = True
 
     def __init__(self, **kwargs):
+        # choose_File = random_verb(dictNumber, Files_Number)
+        self.repteat_quest = str(dictNumber.get(choose_File))
+        self.size_base = str(Files_Number)
+        self.full_correct_answer = Full_Ans_Str
+        self.quest_file = str(dict[choose_File][4])
+        self.quest_0 = str(dict[choose_File][3])
+        self.quest_1 = form_name[0]
+        self.quest_2 = form_name[1]
+        self.quest_3 = form_name[2]
         super().__init__(**kwargs)
         Window.bind(on_key_down=self.handle_keypress)
         Clock.schedule_once(self.set_focus_text_quest_1, 0.1)
@@ -220,7 +230,7 @@ class Irregular(FloatLayout):
     def handle_keypress(self, window, keycode, *args):
         if isinstance(keycode, int) and keycode == 13:
             self.right_button_down()
-            self.ids.right_button.release = (
+            self.ids.right_button.press = (
                 self.ids.right_button.background_normal,
                 self.ids.right_button.background_down,
             ) = (
@@ -232,7 +242,16 @@ class Irregular(FloatLayout):
         if self.ids.right_button.background_normal == "icons/accept_icon.png":
             self.accept_button_down()
         else:
-            self.next_button_down()
+            self.normal_label_state()
+            global choose_File
+            choose_File = random_verb(dictNumber, Files_Number)
+            self.repteat_quest = str(dictNumber.get(choose_File))
+            self.quest_file = str(dict[choose_File][4])
+            self.quest_0 = str(dict[choose_File][3])
+            self.quest_1 = form_name[0]
+            self.quest_2 = form_name[1]
+            self.quest_3 = form_name[2]
+            Clock.schedule_once(self.set_focus_text_quest_1, 0.1)
 
     def check_label_change(self, bool_ans, answer_id, text_id, number):
         if bool_ans:
@@ -298,22 +317,13 @@ class Irregular(FloatLayout):
                     Answer_Correct[i], check_answer[i], text_input[i], i
                 )
         global Full_Ans_Str
-        Full_Ans_Str = str(Full_Answer) + "/" + str(Files_Number)
+        Full_Ans_Str = f"{Full_Answer}/{Files_Number}"
         self.full_correct_answer = Full_Ans_Str
         self.repteat_quest = str(dictNumber.get(choose_File))
         self.size_base = str(Files_Number)
 
     def next_button_down(self):
         self.normal_label_state()
-        global choose_File
-        choose_File = random_verb(dictNumber, Files_Number)
-        self.repteat_quest = str(dictNumber.get(choose_File))
-        self.quest_file = str(dict[choose_File][4])
-        self.quest_0 = str(dict[choose_File][3])
-        self.quest_1 = form_name[0]
-        self.quest_2 = form_name[1]
-        self.quest_3 = form_name[2]
-        Clock.schedule_once(self.set_focus_text_quest_1, 0.1)
 
     def back_button_down(self):
         self.parent.remove_widget(Irregular())
@@ -324,20 +334,20 @@ class Irregular(FloatLayout):
 class Irregular_Menu(FloatLayout):
     def button_A_down(self):
         self.parent.remove_widget(Irregular_Menu())
-        Irregular_check_database("A")
-        level_choose = "A"
+        repeat = int(self.ids.text_repeat.text)
+        Irregular_check_database(repeat, "A")
         self.parent.add_widget(Irregular())
 
     def button_B_down(self):
         self.parent.remove_widget(Irregular_Menu())
-        Irregular_check_database("B")
-        level_choose = "B"
+        repeat = int(self.ids.text_repeat.text)
+        Irregular_check_database(repeat, "B")
         self.parent.add_widget(Irregular())
 
     def button_C_down(self):
         self.parent.remove_widget(Irregular_Menu())
-        Irregular_check_database("C")
-        level_choose = "C"
+        repeat = int(self.ids.text_repeat.text)
+        Irregular_check_database(repeat, "C")
         self.parent.add_widget(Irregular())
 
 

@@ -31,7 +31,28 @@
                 rgb: (0.4,0.4,0.4)
             Rectangle:
                 size: self.width, self.height
-                pos: self.x, self.y   
+                pos: self.x, self.y 
+        BoxLayout:
+            orientation: "vertical"
+            spacing: 1
+            padding: 5, 5, 5, 5
+            Label:
+                text:"Ilość powtórzeń:"
+                font_size: 20
+                halign: 'center'
+                valign: 'middle'
+            TextInput:
+                id: text_repeat
+                text: '3'
+                font_size: 20
+                size_hint_x: 300/1080
+                size_hint_y: 0.5
+                pos_hint: {'x':390/1080}
+                halign: 'center'
+                valign: 'middle'
+                write_tab: False
+                multiline: False
+                disabled: False  
         Button:
             text: "Poziom A1 - A2"
             font_size: 20
