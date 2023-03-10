@@ -12,6 +12,7 @@ import os
 from random import randint
 
 
+# Download resources
 def download_verb_list():
     from urllib.request import urlopen
     from bs4 import BeautifulSoup
@@ -66,6 +67,7 @@ def download_verb_list():
     f.close()
 
 
+# check path to resources
 def check_path_base():
     if os.path.exists("baza") and os.path.isdir("baza"):
         pass
@@ -73,6 +75,7 @@ def check_path_base():
         download_verb_list()
 
 
+# create dict
 def make_dict_and_index(repeat=3):
     files = os.listdir("baza")
     Files_Number = len(files)
@@ -96,6 +99,7 @@ def make_dict_and_index(repeat=3):
     return Files_Number, dict, dictNumber
 
 
+# choose random number
 def random_verb(dictNumber, Files_Number):
     x = True
     while x:
@@ -106,6 +110,7 @@ def random_verb(dictNumber, Files_Number):
             return choose_File
 
 
+# check answer
 def check_correct_answer(Answer, choose_File, dict, dictNumber, Full_Answer):
     Answer_Correct = []
     for i in range(len(Answer)):
@@ -132,54 +137,6 @@ def check_correct_answer(Answer, choose_File, dict, dictNumber, Full_Answer):
     return Answer_Correct, dictNumber, Full_Answer
 
 
-"""def verb_unregular_qa():
-    print(check_path_base())
-
-    Files_Number,dict,dictNumber = make_dict_and_index()
-    
-    full_Answer = 0
-    while True:
-        os.system("cls")
-        if full_Answer == Files_Number:
-            print("Po nauce czas na piwo :)")
-            wait_press = input("Enter, aby wyjść...")
-            break
-
-        else:
-            choose_File = int(randint(1, Files_Number))
-            if dictNumber.get(choose_File) == 0:
-                continue
-            else:
-                print("Ilosć pytań w bazie:", str(Files_Number))
-                print("Przyswojone pytania: ", full_Answer, "/", Files_Number)
-
-                print("Pytanie:", dict[choose_File][4])
-                print("pozostałych powtórzeń pytania:", dictNumber.get(choose_File))
-                print("")
-                print("Czasownik:", dict[choose_File][3])
-                correct_Answer = 0
-                # print(len(dict[choose_File]))
-                # print(dict[choose_File])
-                for i in range(len(dict[choose_File]) - 2):
-                    if input(form_name[i]) in dict[choose_File][i].split():
-                        print("Correct")
-                        correct_Answer += 1
-                    else:
-                        print("Uncorrect, should be: ", dict[choose_File][i])
-                wait_press = input("\nEnter, aby przejść do następnego...")
-                x = dictNumber.get(choose_File)
-                if correct_Answer >= 3:
-                    x -= 1
-                else:
-                    x += 2
-                dictNumber.update({choose_File: x})
-                if x == 0:
-                    full_Answer += 1
-                else:
-                    pass"""
-
-
-quest = []
 form_name = [
     "Bezokolicznik (infinitive): ",
     "II forma (past tense): ",
@@ -234,7 +191,7 @@ class Main(FloatLayout):
             text_id.disabled = True
             answer_id.opacity = 1
         else:
-            should = "Should be " + dict[choose_File][number]
+            should = f'Should be "{dict[choose_File][number]}"'
             answer_id.text = should
             answer_id.color = (0.7, 0, 0, 1)
             text_id.disabled = True
