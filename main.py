@@ -55,9 +55,9 @@ def download_verb_list():
             nameFile = "0" + str(numberFile) + ".txt"
         else:
             nameFile = str(numberFile) + ".txt"
-        nameFile = "baza/" + nameFile
-        if not os.path.exists("baza"):
-            os.makedirs("baza")
+        nameFile = "baza/nieregularne/" + nameFile
+        if not os.path.exists("baza/nieregularne"):
+            os.makedirs("baza/nieregularne")
         else:
             pass
         f = open(nameFile, "w")
@@ -69,7 +69,7 @@ def download_verb_list():
 
 # check path to resources
 def check_path_base():
-    if os.path.exists("baza") and os.path.isdir("baza"):
+    if os.path.exists("baza/nieregularne") and os.path.isdir("baza/nieregularne"):
         pass
     else:
         download_verb_list()
@@ -77,11 +77,11 @@ def check_path_base():
 
 # create dict
 def make_dict_and_index(repeat=3):
-    files = os.listdir("baza")
+    files = os.listdir("baza/nieregularne")
     Files_Number = len(files)
     dict = {}
     for nr, x in enumerate(files):
-        file_name = "baza/" + x
+        file_name = "baza/nieregularne/" + x
         f = open(file_name, "r")
         f = f.readlines()
         if len(f[3].split(", ")) > 3:
@@ -137,22 +137,57 @@ def check_correct_answer(Answer, choose_File, dict, dictNumber, Full_Answer):
     return Answer_Correct, dictNumber, Full_Answer
 
 
-form_name = [
-    "Bezokolicznik (infinitive): ",
-    "II forma (past tense): ",
-    "III forma (past participle): ",
-]
-
 Window.size = (450, 800)
 Config.set("graphics", "resizable", False)
-check_path_base()
-Files_Number, dict, dictNumber = make_dict_and_index()
-choose_File = random_verb(dictNumber, Files_Number)
-Full_Answer = 0
-Full_Ans_Str = str(Full_Answer) + "/" + str(Files_Number)
+
+
+class Menu(FloatLayout):
+    def button_1_down(self):
+        self.parent.remove_widget(Menu())
+        Main_check_database()
+        self.parent.add_widget(Main())
+
+    def button_2_down(self):
+        print("button2")
+
+    def button_3_down(self):
+        print("button3")
+
+
+class MenuApp(App):
+    def build(self):
+        return Menu()
+
+
+def Main_check_database():
+    check_path_base()
+    global Files_Number, dict, dictNumber, choose_File, Full_Answer, Full_Ans_Str, form_name
+    Files_Number, dict, dictNumber = make_dict_and_index()
+    choose_File = random_verb(dictNumber, Files_Number)
+    Full_Answer = 0
+    Full_Ans_Str = str(Full_Answer) + "/" + str(Files_Number)
+    form_name = [
+        "Bezokolicznik (infinitive): ",
+        "II forma (past tense): ",
+        "III forma (past participle): ",
+    ]
+
+
+def Main_remove_database():
+    global Files_Number, dict, dictNumber, choose_File, Full_Answer, Full_Ans_Str, form_name
+    del (
+        Files_Number,
+        dict,
+        dictNumber,
+        choose_File,
+        Full_Answer,
+        Full_Ans_Str,
+        form_name,
+    )
 
 
 class Main(FloatLayout):
+    Main_check_database()
     repteat_quest = StringProperty(str(dictNumber.get(choose_File)))
     full_correct_answer = StringProperty(Full_Ans_Str)
     size_base = StringProperty(str(Files_Number))
@@ -162,10 +197,13 @@ class Main(FloatLayout):
     quest_2 = StringProperty(form_name[1])
     quest_3 = StringProperty(form_name[2])
 
+    def set_focus_text_quest_1(self, dt):
+        self.ids.text_quest_1.focus = True
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         Window.bind(on_key_down=self.handle_keypress)
-        self.ids.text_quest_1.focus = True
+        Clock.schedule_once(self.set_focus_text_quest_1, 0.1)
 
     def handle_keypress(self, window, keycode, *args):
         if isinstance(keycode, int) and keycode == 13:
@@ -252,9 +290,6 @@ class Main(FloatLayout):
         self.full_correct_answer = Full_Ans_Str
         self.repteat_quest = str(dictNumber.get(choose_File))
 
-    def set_focus_text_quest_1(self, dt):
-        self.ids.text_quest_1.focus = True
-
     def next_button_down(self):
         self.normal_label_state()
         global choose_File
@@ -269,13 +304,16 @@ class Main(FloatLayout):
         Clock.schedule_once(self.set_focus_text_quest_1, 0.1)
 
     def back_button_down(self):
-        exit()
+        self.parent.remove_widget(Main())
+        Main_remove_database()
+        self.parent.add_widget(Menu())
 
 
-class MainApp(App):
+"""class MainApp(App):
     def build(self):
         return Main()
-
+"""
 
 if __name__ == "__main__":
-    MainApp().run()
+    Main_remove_database()
+    MenuApp().run()

@@ -1,0 +1,57 @@
+#: include Main.kv
+
+<Menu>:
+    canvas.before:
+        Color:
+            rgb: (0.3, 0.3,0.3)
+        Rectangle:
+            size: self.width, self.height
+            pos: self.x, self.y
+    Label:
+        text: "Wybierz tryb"
+        font_size: 30
+        text_size: self.size
+        halign: 'center'
+        valign: 'middle'
+        size_hint: 1060/1080, 280/1920
+        pos_hint: {'x':15/1080, 'y':1580/1920}
+        canvas.before:
+            Color:
+                rgb: (0.4,0.4,0.4)
+            Rectangle:
+                size: self.width, self.height
+                pos: self.x, self.y
+    BoxLayout:
+        size_hint: 1060/1080, 1240/1920
+        pos_hint: {'x':15/1080, 'y':300/1920}
+        orientation: "vertical"
+        spacing: 1
+        padding: 5, 5, 5, 5
+        canvas.before:
+            Color:
+                rgb: (0.4,0.4,0.4)
+            Rectangle:
+                size: self.width, self.height
+                pos: self.x, self.y
+        
+        Button:
+            text: "Nieregularne czasowniki"
+            font_size: 20
+            on_release: root.button_1_down()
+            canvas.before:
+                Color:
+                    rgb: (0.1, 0.1, 0.1)
+        Button:
+            text: "button 2"
+            font_size: 20
+            on_release: root.button_2_down()
+            canvas.before:
+                Color:
+                    rgb: (0.1, 0.1, 0.1)
+        Button:
+            text: "button 3"
+            font_size: 20
+            on_release: root.button_3_down()
+            canvas.before:    
+                Color:
+                    rgb: (0.1, 0.1, 0.1)
