@@ -38,53 +38,72 @@ def download_verb_list():
         except:
             pass
 
-    verb_irr = []
+    verb_irr = [[], [], []]
+    level = 0
     for nr, word in enumerate(word_list):
         if word[0] == "p" and word[1] == "l" and word[2] == "a" and word[3] == "y":
             list = [x for x in word]
             word = "".join(x for x in list[4:])
             word_list[nr] = word
-        if (nr + 1) % 4 == 0:
-            verb_irr.append(
-                [word_list[nr - 3], word_list[nr - 2], word_list[nr - 1], word_list[nr]]
-            )
-
-    for nr, verb in enumerate(verb_irr):
-        nameFile = ""
-        numberFile = nr + 1
-        if numberFile < 10:
-            nameFile = "00" + str(numberFile) + ".txt"
-        elif numberFile >= 0 and numberFile < 100:
-            nameFile = "0" + str(numberFile) + ".txt"
-        else:
-            nameFile = str(numberFile) + ".txt"
-        nameFile = "baza/nieregularne/" + nameFile
-        if not os.path.exists("baza/nieregularne"):
-            os.makedirs("baza/nieregularne")
+        if word_list[nr] == "awake":
+            level = 1
+        elif word_list[nr] == "bind":
+            level = 2
         else:
             pass
-        f = open(nameFile, "w")
-        f.write("\n".join(x for x in verb))
-    print("Pobrano", len(verb_irr), "czasowników")
-    Enter_press = input("Wciśnij enter aby kontynuować")
+        if (nr + 1) % 4 == 0:
+            verb_irr[level].append(
+                [word_list[nr - 3], word_list[nr - 2], word_list[nr - 1], word_list[nr]]
+            )
+    level_verbs = "A"
+    for verb_list in verb_irr:
+        for nr, verb in enumerate(verb_list):
+            nameFile = ""
+            numberFile = nr + 1
+            if numberFile < 10:
+                nameFile = "00" + str(numberFile) + ".txt"
+            elif numberFile >= 0 and numberFile < 100:
+                nameFile = "0" + str(numberFile) + ".txt"
+            else:
+                nameFile = str(numberFile) + ".txt"
+            nameFile = f"baza/nieregularne/{level_verbs}/{nameFile}"
+            x = verb[0].split()
+            print(x)
+            if x[0] == "awake":
+                level_verbs = "B"
+            elif x[0] == "bind":
+                level_verbs = "C"
+            else:
+                pass
+            if not os.path.exists(f"baza/nieregularne/{level_verbs}"):
+                os.makedirs(f"baza/nieregularne/{level_verbs}")
+            else:
+                pass
+            f = open(nameFile, "w")
+            f.write("\n".join(x for x in verb))
+    # print("Pobrano", len(verb_irr), "czasowników")
     f.close()
 
 
 # check path to resources
 def check_path_base():
-    if os.path.exists("baza/nieregularne") and os.path.isdir("baza/nieregularne"):
-        pass
-    else:
-        download_verb_list()
+    level_verbs = ["A", "B", "C"]
+    for level in level_verbs:
+        if os.path.exists(f"baza/nieregularne/{level}") and os.path.isdir(
+            f"baza/nieregularne/{level}"
+        ):
+            pass
+        else:
+            download_verb_list()
 
 
 # create dict
-def make_dict_and_index(repeat=3):
-    files = os.listdir("baza/nieregularne")
+def make_dict_and_index(repeat, level):
+    files = os.listdir(f"baza/nieregularne/{level}")
     Files_Number = len(files)
     dict = {}
     for nr, x in enumerate(files):
-        file_name = "baza/nieregularne/" + x
+        file_name = f"baza/nieregularne/{level}/{x}"
         f = open(file_name, "r")
         f = f.readlines()
         if len(f[3].split(", ")) > 3:
@@ -140,10 +159,10 @@ def check_correct_answer(Answer, choose_File, dict, dictNumber, Full_Answer):
     return Answer_Correct, dictNumber, Full_Answer
 
 
-def Irregular_check_database():
+def Irregular_check_database(level):
     check_path_base()
     global Files_Number, dict, dictNumber, choose_File, Full_Answer, Full_Ans_Str, form_name
-    Files_Number, dict, dictNumber = make_dict_and_index()
+    Files_Number, dict, dictNumber = make_dict_and_index(3, level)
     choose_File = random_verb(dictNumber, Files_Number)
     Full_Answer = 0
     Full_Ans_Str = str(Full_Answer) + "/" + str(Files_Number)
@@ -152,6 +171,15 @@ def Irregular_check_database():
         "II forma (past tense): ",
         "III forma (past participle): ",
     ]
+    return (
+        Files_Number,
+        dict,
+        dictNumber,
+        choose_File,
+        Full_Answer,
+        Full_Ans_Str,
+        form_name,
+    )
 
 
 def Irregular_remove_database():
@@ -167,8 +195,11 @@ def Irregular_remove_database():
     )
 
 
+level_choose = "C"
+
+
 class Irregular(FloatLayout):
-    Irregular_check_database()
+    Irregular_check_database(level_choose)
     repteat_quest = StringProperty(str(dictNumber.get(choose_File)))
     full_correct_answer = StringProperty(Full_Ans_Str)
     size_base = StringProperty(str(Files_Number))
@@ -270,13 +301,13 @@ class Irregular(FloatLayout):
         Full_Ans_Str = str(Full_Answer) + "/" + str(Files_Number)
         self.full_correct_answer = Full_Ans_Str
         self.repteat_quest = str(dictNumber.get(choose_File))
+        self.size_base = str(Files_Number)
 
     def next_button_down(self):
         self.normal_label_state()
         global choose_File
         choose_File = random_verb(dictNumber, Files_Number)
         self.repteat_quest = str(dictNumber.get(choose_File))
-        self.size_base = str(Files_Number)
         self.quest_file = str(dict[choose_File][4])
         self.quest_0 = str(dict[choose_File][3])
         self.quest_1 = form_name[0]
@@ -290,11 +321,30 @@ class Irregular(FloatLayout):
         self.parent.add_widget(Menu())
 
 
+class Irregular_Menu(FloatLayout):
+    def button_A_down(self):
+        self.parent.remove_widget(Irregular_Menu())
+        Irregular_check_database("A")
+        level_choose = "A"
+        self.parent.add_widget(Irregular())
+
+    def button_B_down(self):
+        self.parent.remove_widget(Irregular_Menu())
+        Irregular_check_database("B")
+        level_choose = "B"
+        self.parent.add_widget(Irregular())
+
+    def button_C_down(self):
+        self.parent.remove_widget(Irregular_Menu())
+        Irregular_check_database("C")
+        level_choose = "C"
+        self.parent.add_widget(Irregular())
+
+
 class Menu(FloatLayout):
     def button_1_down(self):
         self.parent.remove_widget(Menu())
-        Irregular_check_database()
-        self.parent.add_widget(Irregular())
+        self.parent.add_widget(Irregular_Menu())
 
     def button_2_down(self):
         print("button2")

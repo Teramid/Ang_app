@@ -1,7 +1,5 @@
-#: include Irregular.kv
-#: include irregular_menu.kv
 
-<Menu>:
+<Irregular_Menu>:
     canvas.before:
         Color:
             rgb: (0.3, 0.3,0.3)
@@ -9,7 +7,7 @@
             size: self.width, self.height
             pos: self.x, self.y
     Label:
-        text: "Wybierz tryb"
+        text: "Wybierz poziom"
         font_size: 30
         text_size: self.size
         halign: 'center'
@@ -33,26 +31,25 @@
                 rgb: (0.4,0.4,0.4)
             Rectangle:
                 size: self.width, self.height
-                pos: self.x, self.y
-        
+                pos: self.x, self.y   
         Button:
-            text: "Nieregularne czasowniki"
+            text: "Poziom A1 - A2"
             font_size: 20
-            on_release: root.button_1_down()
+            on_release: root.button_A_down()
             canvas.before:
                 Color:
                     rgb: (0.1, 0.1, 0.1)
         Button:
-            text: "button 2"
+            text: "Poziom B1 - B2"
             font_size: 20
-            on_release: root.button_2_down()
+            on_release: root.button_B_down()
             canvas.before:
                 Color:
                     rgb: (0.1, 0.1, 0.1)
         Button:
-            text: "button 3"
+            text: "Poziom C1 - C2"
             font_size: 20
-            on_release: root.button_3_down()
+            on_release: root.button_C_down()
             canvas.before:    
                 Color:
                     rgb: (0.1, 0.1, 0.1)
