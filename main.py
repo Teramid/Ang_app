@@ -7,9 +7,12 @@ from kivy.properties import StringProperty
 from kivy.uix.button import Button
 from kivy.clock import Clock
 
-
 import os
 from random import randint
+
+
+Window.size = (450, 800)
+Config.set("graphics", "resizable", False)
 
 
 # Download resources
@@ -137,29 +140,7 @@ def check_correct_answer(Answer, choose_File, dict, dictNumber, Full_Answer):
     return Answer_Correct, dictNumber, Full_Answer
 
 
-Window.size = (450, 800)
-Config.set("graphics", "resizable", False)
-
-
-class Menu(FloatLayout):
-    def button_1_down(self):
-        self.parent.remove_widget(Menu())
-        Main_check_database()
-        self.parent.add_widget(Main())
-
-    def button_2_down(self):
-        print("button2")
-
-    def button_3_down(self):
-        print("button3")
-
-
-class MenuApp(App):
-    def build(self):
-        return Menu()
-
-
-def Main_check_database():
+def Irregular_check_database():
     check_path_base()
     global Files_Number, dict, dictNumber, choose_File, Full_Answer, Full_Ans_Str, form_name
     Files_Number, dict, dictNumber = make_dict_and_index()
@@ -173,7 +154,7 @@ def Main_check_database():
     ]
 
 
-def Main_remove_database():
+def Irregular_remove_database():
     global Files_Number, dict, dictNumber, choose_File, Full_Answer, Full_Ans_Str, form_name
     del (
         Files_Number,
@@ -186,8 +167,8 @@ def Main_remove_database():
     )
 
 
-class Main(FloatLayout):
-    Main_check_database()
+class Irregular(FloatLayout):
+    Irregular_check_database()
     repteat_quest = StringProperty(str(dictNumber.get(choose_File)))
     full_correct_answer = StringProperty(Full_Ans_Str)
     size_base = StringProperty(str(Files_Number))
@@ -304,16 +285,29 @@ class Main(FloatLayout):
         Clock.schedule_once(self.set_focus_text_quest_1, 0.1)
 
     def back_button_down(self):
-        self.parent.remove_widget(Main())
-        Main_remove_database()
+        self.parent.remove_widget(Irregular())
+        Irregular_remove_database()
         self.parent.add_widget(Menu())
 
 
-"""class MainApp(App):
+class Menu(FloatLayout):
+    def button_1_down(self):
+        self.parent.remove_widget(Menu())
+        Irregular_check_database()
+        self.parent.add_widget(Irregular())
+
+    def button_2_down(self):
+        print("button2")
+
+    def button_3_down(self):
+        print("button3")
+
+
+class MenuApp(App):
     def build(self):
-        return Main()
-"""
+        return Menu()
+
 
 if __name__ == "__main__":
-    Main_remove_database()
+    Irregular_remove_database()
     MenuApp().run()
