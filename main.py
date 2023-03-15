@@ -7,6 +7,7 @@ from kivy.properties import StringProperty
 from kivy.uix.button import Button
 from kivy.clock import Clock
 
+import numpy as np
 import os
 from random import randint
 
@@ -55,34 +56,21 @@ def download_verb_list():
             verb_irr[level].append(
                 [word_list[nr - 3], word_list[nr - 2], word_list[nr - 1], word_list[nr]]
             )
-    level_verbs = "A"
-    for verb_list in verb_irr:
+    level_verbs = ["A", "B", "C"]
+    for i, verb_list in enumerate(verb_irr):
+        level = level_verbs[i]
         for nr, verb in enumerate(verb_list):
             nameFile = ""
             numberFile = nr + 1
-            if numberFile < 10:
-                nameFile = "00" + str(numberFile) + ".txt"
-            elif numberFile >= 0 and numberFile < 100:
-                nameFile = "0" + str(numberFile) + ".txt"
-            else:
-                nameFile = str(numberFile) + ".txt"
-            nameFile = f"baza/nieregularne/{level_verbs}/{nameFile}"
+            nameFile = f"{str(numberFile).zfill(3)}.txt"
+            nameFile = f"baza/nieregularne/{level}/{nameFile}"
             x = verb[0].split()
-            print(x)
-            if x[0] == "awake":
-                level_verbs = "B"
-            elif x[0] == "arise":
-                level_verbs = "C"
+            if not os.path.exists(f"baza/nieregularne/{level}"):
+                os.makedirs(f"baza/nieregularne/{level}")
             else:
                 pass
-            if not os.path.exists(f"baza/nieregularne/{level_verbs}"):
-                os.makedirs(f"baza/nieregularne/{level_verbs}")
-            else:
-                pass
-            f = open(nameFile, "w")
-            f.write("\n".join(x for x in verb))
-    # print("Pobrano", len(verb_irr), "czasowników")
-    f.close()
+            with open(nameFile, "w") as f:
+                f.write("\n".join(x for x in verb))
 
 
 # check path to resources
@@ -104,15 +92,25 @@ def make_dict_and_index(repeat, level):
     dict = {}
     for nr, x in enumerate(files):
         file_name = f"baza/nieregularne/{level}/{x}"
-        f = open(file_name, "r")
-        f = f.readlines()
-        if len(f[3].split(", ")) > 3:
-            list = f[3].split(", ")
-            list[3] = "\n" + list[3]
-            f[3] = ", ".join(verb for verb in list)
-        dict.update(
-            {nr + 1: [f[0].rstrip(), f[1].rstrip(), f[2].rstrip(), f[3], file_name[5:]]}
-        )
+        with open(file_name, "r") as f:
+            f = f.readlines()
+            if len(f[3].split(", ")) > 3:
+                list = f[3].split(", ")
+                list[3] = "\n" + list[3]
+                f[3] = ", ".join(verb for verb in list)
+            file_name = file_name.split("/")
+            dict.update(
+                {
+                    nr
+                    + 1: [
+                        f[0].rstrip(),
+                        f[1].rstrip(),
+                        f[2].rstrip(),
+                        f[3],
+                        file_name[3],
+                    ]
+                }
+            )
 
     dictNumber = {}
     for i in range(1, Files_Number + 1):
@@ -130,33 +128,6 @@ def random_verb(dictNumber, Files_Number):
             continue
         else:
             return choose_File
-
-
-# check answer
-def check_correct_answer(Answer, choose_File, dict, dictNumber, Full_Answer):
-    Answer_Correct = []
-    for i in range(len(Answer)):
-        if (
-            Answer[i].strip().lower() in dict[choose_File][i].split(", ")
-            or Answer[i].strip().lower() in dict[choose_File][i].split()
-            or Answer[i].strip().lower() == dict[choose_File][i]
-        ):
-            Answer_Correct.append(True)
-        else:
-            Answer_Correct.append(False)
-
-    x = dictNumber.get(choose_File)
-    if False not in Answer_Correct:
-        x -= 1
-    else:
-        x += 1
-    dictNumber.update({choose_File: x})
-    if x == 0:
-        Full_Answer += 1
-    else:
-        pass
-
-    return Answer_Correct, dictNumber, Full_Answer
 
 
 def Irregular_check_database(repeat, level):
@@ -251,7 +222,7 @@ class Irregular(FloatLayout):
             self.quest_1 = form_name[0]
             self.quest_2 = form_name[1]
             self.quest_3 = form_name[2]
-            Clock.schedule_once(self.set_focus_text_quest_1, 0.1)
+            Clock.schedule_once(self.set_focus_text_quest_1, 0.3)
 
     def check_label_change(self, bool_ans, answer_id, text_id, number):
         if bool_ans:
@@ -267,24 +238,36 @@ class Irregular(FloatLayout):
             answer_id.opacity = 1
 
     def normal_label_state(self):
-        self.ids.text_quest_1.text = ""
-        self.ids.check_answer_1.opacity = 0
-        self.ids.check_answer_1.color = (1, 1, 1, 1)
-        self.ids.text_quest_1.disabled = False
+        for i in range(1, 4):
+            self.ids[f"text_quest_{i}"].text = ""
+            self.ids[f"check_answer_{i}"].opacity = 0
+            self.ids[f"check_answer_{i}"].color = (1, 1, 1, 1)
+            self.ids[f"text_quest_{i}"].disabled = False
 
-        self.ids.text_quest_2.text = ""
-        self.ids.check_answer_2.opacity = 0
-        self.ids.check_answer_2.color = (1, 1, 1, 1)
-        self.ids.text_quest_2.disabled = False
+    def check_correct_answer(self, Answer, dictNumber, Full_Answer):
+        Answer_Correct = []
+        for i in range(len(Answer)):
+            if (
+                Answer[i].strip().lower() in dict[choose_File][i].split(", ")
+                or Answer[i].strip().lower() in dict[choose_File][i].split()
+                or Answer[i].strip().lower() == dict[choose_File][i]
+            ):
+                Answer_Correct.append(True)
+            else:
+                Answer_Correct.append(False)
 
-        self.ids.text_quest_3.text = ""
-        self.ids.check_answer_3.opacity = 0
-        self.ids.check_answer_3.color = (1, 1, 1, 1)
-        self.ids.text_quest_3.disabled = False
+        x = dictNumber.get(choose_File)
+        if False not in Answer_Correct:
+            x -= 1
+        else:
+            x += 1
+        dictNumber.update({choose_File: x})
+        if x == 0:
+            Full_Answer += 1
+        else:
+            pass
 
-        for text_input_string in self.ids.values():
-            if isinstance(text_input_string, TextInput):
-                text_input_string.text = ""
+        return Answer_Correct, dictNumber, Full_Answer
 
     def accept_button_down(self):
         Answer = []
@@ -293,42 +276,48 @@ class Irregular(FloatLayout):
         Answer.append(self.ids.text_quest_3.text)
         global Full_Answer
         global dictNumber
-        Answer_Correct, dictNumber, Full_Answer = check_correct_answer(
-            Answer, choose_File, dict, dictNumber, Full_Answer
+        Answer_Correct, dictNumber, Full_Answer = self.check_correct_answer(
+            Answer, dictNumber, Full_Answer
         )
-        text_input = [
-            self.ids.text_quest_1,
-            self.ids.text_quest_2,
-            self.ids.text_quest_3,
-        ]
-        check_answer = [
-            self.ids.check_answer_1,
-            self.ids.check_answer_2,
-            self.ids.check_answer_3,
-        ]
-        if False not in Answer_Correct:
-            for i in range(len(text_input)):
-                self.check_label_change(
-                    Answer_Correct[i], check_answer[i], text_input[i], i
-                )
+        if Full_Answer == Files_Number:
+            self.parent.remove_widget(Irregular())
+            self.parent.add_widget(Finish_Window())
+            Irregular_remove_database()
         else:
-            for i in range(len(text_input)):
-                self.check_label_change(
-                    Answer_Correct[i], check_answer[i], text_input[i], i
-                )
-        global Full_Ans_Str
-        Full_Ans_Str = f"{Full_Answer}/{Files_Number}"
-        self.full_correct_answer = Full_Ans_Str
-        self.repteat_quest = str(dictNumber.get(choose_File))
-        self.size_base = str(Files_Number)
-
-    def next_button_down(self):
-        self.normal_label_state()
+            text_input = [
+                self.ids.text_quest_1,
+                self.ids.text_quest_2,
+                self.ids.text_quest_3,
+            ]
+            check_answer = [
+                self.ids.check_answer_1,
+                self.ids.check_answer_2,
+                self.ids.check_answer_3,
+            ]
+            if False not in Answer_Correct:
+                for i in range(len(text_input)):
+                    self.check_label_change(
+                        Answer_Correct[i], check_answer[i], text_input[i], i
+                    )
+            else:
+                for i in range(len(text_input)):
+                    self.check_label_change(
+                        Answer_Correct[i], check_answer[i], text_input[i], i
+                    )
+            global Full_Ans_Str
+            Full_Ans_Str = f"{Full_Answer}/{Files_Number}"
+            self.full_correct_answer = Full_Ans_Str
+            self.repteat_quest = str(dictNumber.get(choose_File))
+            self.size_base = str(Files_Number)
 
     def back_button_down(self):
         self.parent.remove_widget(Irregular())
         Irregular_remove_database()
         self.parent.add_widget(Menu())
+
+
+class Finish_Window(FloatLayout):
+    pass
 
 
 class Irregular_Menu(FloatLayout):
