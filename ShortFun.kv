@@ -1,0 +1,24 @@
+<TextAnswer>:
+    write_tab: False
+    multiline: False
+    disabled: False
+    font_size: 20
+    halign: 'center'
+    valign: 'middle'
+
+
+<MyLabel>:
+    color: 0,0,0,1
+    canvas.before:
+        Color:
+            rgb: (0.6,0.6,0.6)
+        Rectangle:
+            size: self.width, self.height
+            pos: self.x, self.y
+
+
+<MenuButton>:
+    font_size: 20
+    canvas.before:
+        Color:
+            rgb: (0.1, 0.1, 0.1)

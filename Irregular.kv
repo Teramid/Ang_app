@@ -1,4 +1,3 @@
-#: include Finish_Window
 
 <Irregular>:
     canvas.before:
@@ -22,69 +21,27 @@
         BoxLayout:
             orientation: 'vertical'
             spacing:1
-            Label:
-                text:"Pozostałe\npowtórzenia:"
-                color: 0,0,0,1 
-                canvas.before:
-                    Color:
-                        rgb: (0.6,0.6,0.6)
-                    Rectangle:
-                        size: self.width, self.height
-                        pos: self.x, self.y
-            Label:
-                text:root.repteat_quest
-                color: 0,0,0,1 
-                canvas.before:
-                    Color:
-                        rgb: (0.6,0.6,0.6)
-                    Rectangle:
-                        size: self.width, self.height
-                        pos: self.x, self.y
-        
+            MyLabel:
+                text: "Pozostałe\npowtórzenia:"
+            MyLabel:
+                id: repeat_quest
+                text: ""
         BoxLayout:
             orientation: 'vertical'
             spacing:1
-            Label:
+            MyLabel:
                 text:"Przyswojone\npytania:"
-                color: 0,0,0,1 
-                canvas.before:
-                    Color:
-                        rgb: (0.6,0.6,0.6)
-                    Rectangle:
-                        size: self.width, self.height
-                        pos: self.x, self.y
-            Label:
-                text:root.full_correct_answer
-                color: 0,0,0,1 
-                canvas.before:
-                    Color:
-                        rgb: (0.6,0.6,0.6)
-                    Rectangle:
-                        size: self.width, self.height
-                        pos: self.x, self.y
-                    
+            MyLabel:
+                id: full_correct_answer   
+                text: "" 
         BoxLayout:
             orientation: 'vertical'
             spacing:1
-            Label:
-                text:"Ilość pytań:"
-                color: 0,0,0,1 
-                canvas.before:
-                    Color:
-                        rgb: (0.6,0.6,0.6)
-                    Rectangle:
-                        size: self.width, self.height
-                        pos: self.x, self.y
-            Label:
-                text:root.size_base
-                color: 0,0,0,1 
-                canvas.before:
-                    Color:
-                        rgb: (0.6,0.6,0.6)
-                    Rectangle:
-                        size: self.width, self.height
-                        pos: self.x, self.y
-
+            MyLabel:
+                text: "Ilość pytań:"
+            MyLabel:
+                id: size_base
+                text: ""
     
 #Question
     BoxLayout:
@@ -112,11 +69,12 @@
                 size_hint_x: 1.8
                 pos_hint: {'x':0.5}
                 color: 0,0,0,1
-            Label:
-                text: root.quest_file
-                color: 0,0,0,1
         Label:
-            text: root.quest_0
+            id: quest_0
+            text: "0"
+            font_size: 20
+            halign: 'center'
+            valign: 'middle'
             color: 0,0,0,1
             
 
@@ -145,14 +103,11 @@
                     size: self.width, self.height
                     pos: self.x, self.y
             Label:
-                text: root.quest_1
+                text: "Bezokolicznik (infinitive):"
                 size_hint_y: 0.3
                 color: 0,0,0,1
-            TextInput:
+            TextAnswer:
                 id: text_quest_1
-                write_tab: False
-                multiline: False
-                disabled: False
             Label:
                 id: check_answer_1
                 size_hint_y: 0.3
@@ -170,14 +125,11 @@
                     size: self.width, self.height
                     pos: self.x, self.y
             Label:
-                text: root.quest_2
+                text: "II forma (past tense):"
                 size_hint_y: 0.3
                 color: 0,0,0,1
-            TextInput:
+            TextAnswer:
                 id: text_quest_2
-                write_tab: False
-                multiline: False
-                disabled: False
             Label:
                 id: check_answer_2
                 size_hint_y: 0.3
@@ -195,14 +147,11 @@
                     size: self.width, self.height
                     pos: self.x, self.y
             Label:
-                text: root.quest_3
+                text: "III forma (past participle):"
                 size_hint_y: 0.3
                 color: 0,0,0,1
-            TextInput:
+            TextAnswer:
                 id: text_quest_3
-                write_tab: False
-                multiline: False
-                disabled: False
             Label:
                 id: check_answer_3
                 size_hint_y: 0.3
@@ -229,8 +178,8 @@
         id: right_button
         background_normal: 'icons/accept_icon.png'
         background_down: 'icons/next_icon.png'
-        on_release: self.background_normal, self.background_down = self.background_down, self.background_normal 
-        on_press: root.right_button_down()
+        on_press: 
+            root.right_button_down()
         size_hint: 220/1080, 220/1920
         pos_hint: {'x':830/1080, 'y':40/1920}
         canvas.before:
