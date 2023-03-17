@@ -10,14 +10,21 @@ import numpy as np
 import os
 from random import randint, choice, random
 
-from main_beta import Full_Answer
 
 Window.size = (450, 800)
 Config.set("graphics", "resizable", False)
 
 
 def download_verb_list():
-    pass
+    import git
+
+    if not os.path.exists(f"baza"):
+        os.makedirs(f"baza")
+    else:
+        pass
+    git_url = "https://github.com/Teramid/Baza.git"
+    repo_dir = "baza"
+    git.Repo.clone_from(git_url, repo_dir)
 
 
 def check_path_base():
@@ -85,7 +92,6 @@ class Irregular(Screen):
 
     def __init__(self, **kw):
         make_verb_base()
-        # self.initialization()
         super(Irregular, self).__init__(**kw)
 
     def handle_keypress(self, window, keycode, *args):
