@@ -1,15 +1,17 @@
+from msilib.schema import Directory
+from tkinter import Label
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen, SlideTransition
 from kivy.uix.textinput import TextInput
 from kivy.config import Config
 from kivy.core.window import Window
-from kivy.properties import StringProperty
 from kivy.clock import Clock
 import ShortFun
-import numpy as np
 import os
 from random import randint, choice, random
-
+from kivy.uix.button import Button
+from kivy.uix.popup import Popup
+from kivy.uix.boxlayout import BoxLayout
 
 Window.size = (450, 800)
 Config.set("graphics", "resizable", False)
@@ -27,6 +29,7 @@ def download_verb_list():
     git.Repo.clone_from(git_url, repo_dir)
 
 
+# checking path and base exist, if not download
 def check_path_base():
     level_verbs = ["A", "B", "C"]
     for level in level_verbs:
@@ -38,7 +41,8 @@ def check_path_base():
             download_verb_list()
 
 
-def make_verb_base(repeat=3, level="A", size=10):
+# Create verbs resource to learn with the selected repetition, level and size
+def make_verbs_resource(repeat=3, level="A", size=10):
     files = [x + 1 for x in range(len(os.listdir(f"baza/nieregularne/{level}")))]
     Files_Number = len(files)
     random_list = []
@@ -60,9 +64,6 @@ def make_verb_base(repeat=3, level="A", size=10):
             ir.Dict.update({i: [f[0].rstrip(), f[1].rstrip(), f[2].rstrip(), f[3]]})
         ir.Dict_Repeat.update({i: repeat})
     return ir.Dict, ir.Dict_Repeat
-
-
-# print(make_verb_base())
 
 
 def random_verb(dictNumber, last_File):
@@ -91,7 +92,7 @@ class Irregular(Screen):
         self.ids.text_quest_1.focus = True
 
     def __init__(self, **kw):
-        make_verb_base()
+        make_verbs_resource()
         super(Irregular, self).__init__(**kw)
 
     def handle_keypress(self, window, keycode, *args):
@@ -99,7 +100,7 @@ class Irregular(Screen):
             self.right_button_down()
 
     def on_pre_enter(self, *args):
-        make_verb_base(irr_m.repeat, irr_m.lvl, irr_m.size_base)
+        make_verbs_resource(irr_m.repeat, irr_m.lvl, irr_m.size_base)
         ir.Size_Dict = len(self.Dict)
         self.ids.size_base.text = str(self.Size_Dict)
         self.ids.right_button.background_normal = "icons/accept_icon.png"
@@ -239,6 +240,130 @@ class Irregular_Menu(Screen):
 irr_m = Irregular_Menu
 
 
+class Dict_menu(Screen):
+    def initit_dicts_list(self):
+        directory = "baza\Dictionary"
+        # Add dynamic buttons to the button_layout
+        files = os.listdir(directory)
+        dicts = {}
+        if len(files) == 0:
+            empty_label = Button(
+                text=f"Brak dostępnych zasobów\nUtwórz nową bazę", font_size=20
+            )
+            self.ids.scroll_menu_dict.add_widget(empty_label)
+        else:
+            for file in files:
+                with open(f"{directory}/{file}", "r") as f:
+                    count_line = sum(1 for line in f)
+                dicts.update({file: count_line})
+            for key, value in dicts.items():
+                if value == 1:
+                    value = f"{value} słowo"
+                elif value == 2 or value == 3:
+                    value = f"{value} słowa"
+                else:
+                    value = f"{value} słów"
+                button = Button(text=f"{key[:-4]} ({value})", font_size=20)
+                self.ids.scroll_menu_dict.add_widget(button)
+
+    def __init__(self, **kw):
+        super().__init__(**kw)
+        self.initit_dicts_list()
+
+    def on_pre_enter(self, *args):
+        self.ids.scroll_menu_dict.clear_widgets()
+        DmCw.resource_name = ""
+        self.initit_dicts_list()
+
+    def back_button_down_dict(self):
+        self.parent.remove_widget(Dict_menu())
+        sm.current = "menu"
+
+    class Create_window_popup(Popup):
+        def create_button_down(self):
+            DmCw.resource_name = self.ids.base_name.text
+            self.clear_widgets()
+            sm.current = "create_res"
+
+
+DmCw = Dict_menu.Create_window_popup
+
+
+class Create_window(Screen):
+    def on_pre_enter(self, *args):
+        self.ids.add_words.clear_widgets()
+        self.init_create_window()
+
+    def init_create_window(self):
+        self.ids.create_text_box.text = (
+            f'Dodaj wyrażenia do bazy\n"{DmCw.resource_name}"'
+        )
+        if os.path.exists(f"baza/Dictionary/{DmCw.resource_name}.txt"):
+            with open(
+                f"baza/Dictionary/{DmCw.resource_name}.txt", "r", encoding="utf-8"
+            ) as f:
+                f = [lines.strip().split() for lines in f.readlines()]
+            Mydict = {}
+            Mydict.update({x[0]: x[1] for x in f})
+            self.boxText = self.ids.add_words
+            for key, value in Mydict.items():
+                self.textinput_create(key, value)
+        else:
+            self.boxText = self.ids.add_words
+            for x in range(4):
+                self.textinput_create()
+        self.add_button_show()
+
+    def textinput_create(self, key="", value=""):
+        boxText = BoxLayout(
+            orientation="horizontal", spacing=5, size_hint=(1, None), height=40
+        )
+        textinput1 = TextInput(halign="center", valign="middle", font_size=20, text=key)
+        textinput2 = TextInput(
+            halign="center", valign="middle", font_size=20, text=value
+        )
+        boxText.add_widget(textinput1)
+        boxText.add_widget(textinput2)
+        self.boxText.add_widget(boxText)
+
+    def add_button_show(self):
+        add_button = Button(
+            text=f"+",
+            font_size=20,
+            size_hint=(1, None),
+            height=40,
+            on_release=self.add_textinput_button,
+        )
+        self.boxText.add_widget(add_button)
+
+    def accept_button_down_create(self):
+        Mydict = {}
+        for box in self.ids.add_words.children:
+            minibox = []
+            for text_input in box.children:
+                if len(text_input.text) > 0:
+                    minibox.append(text_input.text)
+            if len(minibox) > 1:
+                Mydict.update({minibox[1].strip(): minibox[0].strip()})
+        print(Mydict)
+
+    def back_button_down(self):
+        self.parent.remove_widget(Create_window())
+        sm.current = "dictionary"
+
+    def add_textinput_button(self, instance):
+        self.textinput_create()
+        self.boxText.remove_widget(instance)
+        self.add_button_show()
+
+    class Accept_Create_popup(Popup):
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs)
+
+        def Accept_Create_down(self):
+            Create_window.accept_button_down_create(Create_window())
+
+
 class Menu(Screen):
     def button_1_down(self):
         sm.remove_widget(Menu())
@@ -246,7 +371,8 @@ class Menu(Screen):
         pass
 
     def button_2_down(self):
-        print("button2")
+        sm.remove_widget(Menu())
+        sm.current = "dictionary"
 
     def button_3_down(self):
         print("button3")
@@ -261,6 +387,8 @@ class MenuApp(App):
         sm.add_widget(Irregular_Menu(name="irr_menu"))
         sm.add_widget(Irregular(name="irregular"))
         sm.add_widget(Finish_Window(name="finish_irr"))
+        sm.add_widget(Dict_menu(name="dictionary"))
+        sm.add_widget(Create_window(name="create_res"))
         return sm
 
 

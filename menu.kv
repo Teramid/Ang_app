@@ -1,8 +1,7 @@
 #: include Irregular.kv
-#: include irregular_menu.kv
 #: include Finish_Window.kv
 #: include ShortFun.kv
-
+#: import Factory kivy.factory.Factory
 <Menu>:
     canvas.before:
         Color:
@@ -42,9 +41,306 @@
             on_release: root.button_1_down()
 
         MenuButton:
-            text: "button 2"
+            text: "Słówka"
             on_release: root.button_2_down()
 
         MenuButton:
             text: "button 3"
             on_release: root.button_3_down()
+
+
+
+<Irregular_Menu>:
+    canvas.before:
+        Color:
+            rgb: (0.3, 0.3,0.3)
+        Rectangle:
+            size: self.width, self.height
+            pos: self.x, self.y
+    Label:
+        text: "Wybierz poziom"
+        font_size: 30
+        text_size: self.size
+        halign: 'center'
+        valign: 'middle'
+        size_hint: 1060/1080, 280/1920
+        pos_hint: {'x':15/1080, 'y':1580/1920}
+        canvas.before:
+            Color:
+                rgb: (0.4,0.4,0.4)
+            Rectangle:
+                size: self.width, self.height
+                pos: self.x, self.y
+    BoxLayout:
+        size_hint: 1060/1080, 1240/1920
+        pos_hint: {'x':15/1080, 'y':300/1920}
+        orientation: "vertical"
+        spacing: 1
+        padding: 5, 5, 5, 5
+        canvas.before:
+            Color:
+                rgb: (0.4,0.4,0.4)
+            Rectangle:
+                size: self.width, self.height
+                pos: self.x, self.y 
+        BoxLayout:
+            orientation: "horizontal"
+            spacing: 1
+            padding: 5, 5, 5, 5
+            BoxLayout:
+                orientation: "vertical"
+                spacing: 1
+                padding: 5, 5, 5, 5
+                Label:
+                    text:"Ilość powtórzeń:"
+                    font_size: 20
+                    halign: 'center'
+                    valign: 'middle'
+                TextInput:
+                    id: text_repeat
+                    text: '3'
+                    font_size: 20
+                    size_hint_x: 300/1080
+                    size_hint_y: 0.5
+                    pos_hint: {'x':390/1080}
+                    halign: 'center'
+                    valign: 'middle'
+                    write_tab: False
+                    multiline: False
+                    disabled: False  
+            BoxLayout:
+                orientation: "vertical"
+                spacing: 1
+                padding: 5, 5, 5, 5
+                Label:
+                    text:"Ilość słówek:"
+                    font_size: 20
+                    halign: 'center'
+                    valign: 'middle'
+                TextInput:
+                    id: text_size_dict
+                    text: '10'
+                    font_size: 20
+                    size_hint_x: 300/1080
+                    size_hint_y: 0.5
+                    pos_hint: {'x':390/1080}
+                    halign: 'center'
+                    valign: 'middle'
+                    write_tab: False
+                    multiline: False
+                    disabled: False  
+        MenuButton:
+            text: "Poziom A1 - A2"
+            on_release: root.button_A_down()
+
+        MenuButton:
+            text: "Poziom B1 - B2"
+            on_release: root.button_B_down()
+
+        MenuButton:
+            text: "Poziom C1 - C2"
+            on_release: root.button_C_down()
+
+
+    Button:
+        id: left_button
+        background_normal: 'icons/back_icon.png'
+        size_hint: 220/1080, 220/1920
+        pos_hint: {'x':30/1080, 'y':40/1920}
+        on_press: root.back_button_down_irr()
+        canvas.before:
+            Color:
+                rgb: (0.5,0.1,0.1)
+            Rectangle:
+                size: self.width, self.height
+                pos: self.x, self.y
+        
+
+
+
+<Create_window_popup@Popup>
+    auto_dissmis: False
+    size_hint: 0.7, 0.2
+    pos_hint: {'x':0.2, 'y':0.4}
+    title: "Podaj nazwę bazy"
+    title_align: 'center'
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 5
+        spacing:5
+        TextInput:
+            id: base_name
+            size_hint: 0.9, 0.4
+            pos_hint: {'center_x': 0.5}
+            halign: 'center'
+            valign: 'middle'
+        Button:
+            text: "Utwórz"
+            font_size: 20
+            size_hint: 0.9, 0.4
+            pos_hint: {'center_x': 0.5}
+            on_release: 
+                root.dismiss()
+                root.create_button_down()
+
+
+
+<Dict_menu>:
+    canvas.before:
+        Color:
+            rgb: (0.3, 0.3,0.3)
+        Rectangle:
+            size: self.width, self.height
+            pos: self.x, self.y
+    Label:
+        text: "Wybierz temat"
+        font_size: 30
+        text_size: self.size
+        halign: 'center'
+        valign: 'middle'
+        size_hint: 1060/1080, 280/1920
+        pos_hint: {'x':15/1080, 'y':1580/1920}
+        canvas.before:
+            Color:
+                rgb: (0.4,0.4,0.4)
+            Rectangle:
+                size: self.width, self.height
+                pos: self.x, self.y
+    BoxLayout:
+        size_hint: 1060/1080, 200/1920
+        pos_hint: {'x': 15/1080, 'y':1340/1920}
+        padding: 10
+        spacing: 10
+        canvas.before:
+            Color:
+                rgb: (0.3,0.3,0.3)
+            Rectangle:
+                size: self.width, self.height
+                pos: self.x, self.y
+        Button:
+            text: "Stworz nową bazę"
+            on_release: Factory.Create_window_popup().open()
+            font_size: 20
+        Button:
+            id: edit_dictionary
+            text: "Edytuj/Usuń"
+            font_size: 20
+
+
+    ScrollView:
+        size_hint: 1060/1080, 1000/1920
+        pos_hint: {'x':15/1080, 'y':300/1920}
+        do_scroll_y: True
+        do_scroll_x: False
+        BoxLayout:
+            id: scroll_menu_dict
+            orientation: 'vertical'
+            size_hint_y: None
+            height:200
+            font_size: 20
+    
+    Button:
+        background_normal: 'icons/back_icon.png'
+        size_hint: 220/1080, 220/1920
+        pos_hint: {'x':30/1080, 'y':40/1920}
+        on_press: root.back_button_down_dict()
+        canvas.before:
+            Color:
+                rgb: (0.5,0.1,0.1)
+            Rectangle:
+                size: self.width, self.height
+                pos: self.x, self.y
+
+<Accept_Create_popup@Popup>
+    auto_dissmis: False
+    size_hint: 0.7, 0.15
+    pos_hint: {'x':0.2, 'y':0.4}
+    title: "Zapisać"
+    title_align: 'center'
+    BoxLayout:
+        Button:
+            text: "Tak"
+            font_size:20
+            on_release: 
+                root.dismiss()
+                root.Accept_Create_down()
+        Button:
+            text: "Nie"
+            font_size:20
+            on_release: root.dismiss()
+<Create_window>:
+    canvas.before:
+        Color:
+            rgb: (0.3, 0.3,0.3)
+        Rectangle:
+            size: self.width, self.height
+            pos: self.x, self.y
+    Label:
+        text: ""
+        id: create_text_box
+        font_size: 25
+        text_size: self.size
+        halign: 'center'
+        valign: 'middle'
+        size_hint: 1060/1080, 280/1920
+        pos_hint: {'x':15/1080, 'y':1580/1920}
+        canvas.before:
+            Color:
+                rgb: (0.4,0.4,0.4)
+            Rectangle:
+                size: self.width, self.height
+                pos: self.x, self.y
+    BoxLayout:
+        size_hint: 1060/1080, 80/1920
+        pos_hint: {'x': 15/1080, 'y':1440/1920}
+        padding: 10
+        spacing: 10
+        canvas.before:
+            Color:
+                rgb: (0.3,0.3,0.3)
+            Rectangle:
+                size: self.width, self.height
+                pos: self.x, self.y
+        Label:
+            text: "Angielski"
+            font_size: 20
+        Label:
+            text: "Polski"
+            font_size: 20
+    ScrollView:
+        size_hint: 1060/1080, 1100/1920
+        pos_hint: {'x':15/1080, 'y':300/1920}
+        do_scroll_y: True
+        do_scroll_x: False
+        BoxLayout:
+            id: add_words
+            padding:5
+            spacing: 10
+            orientation: 'vertical'
+            size_hint_y: None
+            height:self.minimum_height
+            font_size: 20
+    Button:
+        id: left_button
+        background_normal: 'icons/back_icon.png'
+        size_hint: 220/1080, 220/1920
+        pos_hint: {'x':30/1080, 'y':40/1920}
+        on_press: root.back_button_down()
+        canvas.before:
+            Color:
+                rgb: (0.5,0.1,0.1)
+            Rectangle:
+                size: self.width, self.height
+                pos: self.x, self.y
+
+    Button:
+        background_normal: 'icons/accept_icon.png'
+        on_press: Factory.Accept_Create_popup().open()
+        size_hint: 220/1080, 220/1920
+        pos_hint: {'x':830/1080, 'y':40/1920}
+        canvas.before:
+            Color:
+                rgb: (0.1, 0.35, 0.1) if self.state == 'down' else (0.1, 0.5, 0.1)
+            Rectangle:
+                size: self.width, self.height
+                pos: self.x, self.y
