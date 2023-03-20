@@ -128,8 +128,11 @@ class Irregular(Screen):
         Correct = []
         for i, ans in enumerate(Answer):
             if (
-                ans.strip() in self.Dict[self.choose_File][i].split(", ")
-                or ans.strip() in self.Dict[self.choose_File][i].split()
+                ans.strip()
+                in (
+                    self.Dict[self.choose_File][i].split(", "),
+                    self.Dict[self.choose_File][i].split(),
+                )
                 or ans.strip() == self.Dict[self.choose_File][i]
             ):
                 Correct.append(True)
@@ -241,6 +244,9 @@ irr_m = Irregular_Menu
 
 
 class Dict_menu(Screen):
+    def chosen_dict(self, instance):
+        sm.current = "dict_quiz"
+
     def initit_dicts_list(self):
         directory = "baza\Dictionary"
         # Add dynamic buttons to the button_layout
@@ -259,11 +265,15 @@ class Dict_menu(Screen):
             for key, value in dicts.items():
                 if value == 1:
                     value = f"{value} słowo"
-                elif value == 2 or value == 3:
+                elif value in (2, 3, 4):
                     value = f"{value} słowa"
                 else:
                     value = f"{value} słów"
-                button = Button(text=f"{key[:-4]} ({value})", font_size=20)
+                button = Button(
+                    text=f"{key[:-4]} ({value})",
+                    font_size=20,
+                    on_release=self.chosen_dict,
+                )
                 self.ids.scroll_menu_dict.add_widget(button)
 
     def __init__(self, **kw):
@@ -299,9 +309,7 @@ class Create_window(Screen):
             f'Dodaj wyrażenia do bazy\n"{DmCw.resource_name}"'
         )
         if os.path.exists(f"baza/Dictionary/{DmCw.resource_name}.txt"):
-            with open(
-                f"baza/Dictionary/{DmCw.resource_name}.txt", "r", encoding="utf-8"
-            ) as f:
+            with open(f"baza/Dictionary/{DmCw.resource_name}.txt", "r") as f:
                 f = [lines.strip().split() for lines in f.readlines()]
             Mydict = {}
             Mydict.update({x[0]: x[1] for x in f})
@@ -318,9 +326,21 @@ class Create_window(Screen):
         boxText = BoxLayout(
             orientation="horizontal", spacing=5, size_hint=(1, None), height=40
         )
-        textinput1 = TextInput(halign="center", valign="middle", font_size=20, text=key)
+        textinput1 = TextInput(
+            halign="center",
+            valign="middle",
+            font_size=20,
+            text=key,
+            write_tab=False,
+            multiline=False,
+        )
         textinput2 = TextInput(
-            halign="center", valign="middle", font_size=20, text=value
+            halign="center",
+            valign="middle",
+            font_size=20,
+            text=value,
+            write_tab=False,
+            multiline=False,
         )
         boxText.add_widget(textinput1)
         boxText.add_widget(textinput2)
@@ -345,11 +365,13 @@ class Create_window(Screen):
                     minibox.append(text_input.text)
             if len(minibox) > 1:
                 Mydict.update({minibox[1].strip(): minibox[0].strip()})
-        print(Mydict)
+        with open(f"baza/Dictionary/{DmCw.resource_name}.txt", "w") as f:
+            for key, value in Mydict.items():
+                f.write(f"{key} {value}\n")
 
     def back_button_down(self):
         self.parent.remove_widget(Create_window())
-        sm.current = "dictionary"
+        sm.current = "dict_menu"
 
     def add_textinput_button(self, instance):
         self.textinput_create()
@@ -357,11 +379,19 @@ class Create_window(Screen):
         self.add_button_show()
 
     class Accept_Create_popup(Popup):
-        def __init__(self, **kwargs):
+        def __init__(self, create_window_instance, **kwargs):
             super().__init__(**kwargs)
+            self.create_window_instance = create_window_instance
 
         def Accept_Create_down(self):
-            Create_window.accept_button_down_create(Create_window())
+            self.create_window_instance.accept_button_down_create()
+            sm.current = "dict_menu"
+
+
+class DictionaryQuiz(Screen):
+    def back_button_down(self):
+        self.parent.remove_widget(DictionaryQuiz())
+        sm.current = "dict_menu"
 
 
 class Menu(Screen):
@@ -372,7 +402,7 @@ class Menu(Screen):
 
     def button_2_down(self):
         sm.remove_widget(Menu())
-        sm.current = "dictionary"
+        sm.current = "dict_menu"
 
     def button_3_down(self):
         print("button3")
@@ -387,8 +417,9 @@ class MenuApp(App):
         sm.add_widget(Irregular_Menu(name="irr_menu"))
         sm.add_widget(Irregular(name="irregular"))
         sm.add_widget(Finish_Window(name="finish_irr"))
-        sm.add_widget(Dict_menu(name="dictionary"))
+        sm.add_widget(Dict_menu(name="dict_menu"))
         sm.add_widget(Create_window(name="create_res"))
+        sm.add_widget(DictionaryQuiz(name="dict_quiz"))
         return sm
 
 

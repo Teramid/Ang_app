@@ -1,6 +1,7 @@
 #: include Irregular.kv
 #: include Finish_Window.kv
 #: include ShortFun.kv
+#: include DictionaryQuiz.kv
 #: import Factory kivy.factory.Factory
 <Menu>:
     canvas.before:
@@ -96,18 +97,13 @@
                     font_size: 20
                     halign: 'center'
                     valign: 'middle'
-                TextInput:
+                TextAnswer:
                     id: text_repeat
                     text: '3'
-                    font_size: 20
                     size_hint_x: 300/1080
                     size_hint_y: 0.5
                     pos_hint: {'x':390/1080}
-                    halign: 'center'
-                    valign: 'middle'
-                    write_tab: False
-                    multiline: False
-                    disabled: False  
+
             BoxLayout:
                 orientation: "vertical"
                 spacing: 1
@@ -117,18 +113,13 @@
                     font_size: 20
                     halign: 'center'
                     valign: 'middle'
-                TextInput:
+                TextAnswer:
                     id: text_size_dict
                     text: '10'
-                    font_size: 20
                     size_hint_x: 300/1080
                     size_hint_y: 0.5
                     pos_hint: {'x':390/1080}
-                    halign: 'center'
-                    valign: 'middle'
-                    write_tab: False
-                    multiline: False
-                    disabled: False  
+
         MenuButton:
             text: "Poziom A1 - A2"
             on_release: root.button_A_down()
@@ -142,20 +133,8 @@
             on_release: root.button_C_down()
 
 
-    Button:
-        id: left_button
-        background_normal: 'icons/back_icon.png'
-        size_hint: 220/1080, 220/1920
-        pos_hint: {'x':30/1080, 'y':40/1920}
+    BackButton:
         on_press: root.back_button_down_irr()
-        canvas.before:
-            Color:
-                rgb: (0.5,0.1,0.1)
-            Rectangle:
-                size: self.width, self.height
-                pos: self.x, self.y
-        
-
 
 
 <Create_window_popup@Popup>
@@ -174,6 +153,8 @@
             pos_hint: {'center_x': 0.5}
             halign: 'center'
             valign: 'middle'
+            write_tab: False
+            multiline: False
         Button:
             text: "Utwórz"
             font_size: 20
@@ -239,17 +220,10 @@
             height:200
             font_size: 20
     
-    Button:
-        background_normal: 'icons/back_icon.png'
-        size_hint: 220/1080, 220/1920
-        pos_hint: {'x':30/1080, 'y':40/1920}
+    BackButton:
         on_press: root.back_button_down_dict()
-        canvas.before:
-            Color:
-                rgb: (0.5,0.1,0.1)
-            Rectangle:
-                size: self.width, self.height
-                pos: self.x, self.y
+
+
 
 <Accept_Create_popup@Popup>
     auto_dissmis: False
@@ -320,27 +294,9 @@
             size_hint_y: None
             height:self.minimum_height
             font_size: 20
-    Button:
-        id: left_button
-        background_normal: 'icons/back_icon.png'
-        size_hint: 220/1080, 220/1920
-        pos_hint: {'x':30/1080, 'y':40/1920}
+    BackButton:
         on_press: root.back_button_down()
-        canvas.before:
-            Color:
-                rgb: (0.5,0.1,0.1)
-            Rectangle:
-                size: self.width, self.height
-                pos: self.x, self.y
 
-    Button:
+    RightButton:
         background_normal: 'icons/accept_icon.png'
-        on_press: Factory.Accept_Create_popup().open()
-        size_hint: 220/1080, 220/1920
-        pos_hint: {'x':830/1080, 'y':40/1920}
-        canvas.before:
-            Color:
-                rgb: (0.1, 0.35, 0.1) if self.state == 'down' else (0.1, 0.5, 0.1)
-            Rectangle:
-                size: self.width, self.height
-                pos: self.x, self.y
+        on_press: on_press: Factory.Accept_Create_popup(root).open()

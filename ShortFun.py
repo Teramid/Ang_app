@@ -14,3 +14,11 @@ class MyLabel(Label):
 
 class MenuButton(Button):
     pass
+
+
+class BackButton(Button):
+    pass
+
+
+class RightButton(Button):
+    pass

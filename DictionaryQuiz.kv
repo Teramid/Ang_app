@@ -1,0 +1,58 @@
+<DictionaryQuiz>:
+    canvas.before:
+        Color:
+            rgb: (0.3, 0.3,0.3)
+        Rectangle:
+            size: self.width, self.height
+            pos: self.x, self.y
+    BoxLayout:
+        size_hint: 1060/1080, 280/1920
+        pos_hint: {'x':15/1080, 'y':1580/1920}
+        spacing: 20
+        padding: 5, 5, 5, 5
+        canvas.before:
+            Color:
+                rgb: (0.4,0.4,0.4)
+            Rectangle:
+                size: self.width, self.height
+                pos: self.x, self.y
+
+        BoxLayout:
+            orientation: 'vertical'
+            spacing:1
+            MyLabel:
+                text: "Pozostałe\npowtórzenia:"
+            MyLabel:
+                id: repeat_quest
+                text: ""
+        BoxLayout:
+            orientation: 'vertical'
+            spacing:1
+            MyLabel:
+                text:"Przyswojone\npytania:"
+            MyLabel:
+                id: full_correct_answer   
+                text: "" 
+        BoxLayout:
+            orientation: 'vertical'
+            spacing:1
+            MyLabel:
+                text: "Ilość pytań:"
+            MyLabel:
+                id: size_base
+                text: ""
+
+    BoxLayout:
+        size_hint: 1060/1080, 1000/1920
+        pos_hint: {'x':15/1080, 'y':280/1920}
+        spacing: 20
+        padding: 5, 5, 5, 5
+        canvas.before:
+            Color:
+                rgb: (0.4,0.4,0.4)
+            Rectangle:
+                size: self.width, self.height
+                pos: self.x, self.y
+
+    BackButton:
+        on_press: root.back_button_down()
