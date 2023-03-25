@@ -1,17 +1,20 @@
+import os
 from msilib.schema import Directory
+from random import choice, randint, random
 from tkinter import Label
+
 from kivy.app import App
-from kivy.uix.screenmanager import ScreenManager, Screen, SlideTransition
-from kivy.uix.textinput import TextInput
+from kivy.clock import Clock
 from kivy.config import Config
 from kivy.core.window import Window
-from kivy.clock import Clock
-import ShortFun
-import os
-from random import randint, choice, random
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.popup import Popup
-from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.screenmanager import Screen, ScreenManager, SlideTransition
+from kivy.uix.textinput import TextInput
+from numpy import isin
+
+import ShortFun
 
 Window.size = (450, 800)
 Config.set("graphics", "resizable", False)
@@ -43,6 +46,7 @@ def check_path_base():
 
 # Create verbs resource to learn with the selected repetition, level and size
 def make_verbs_resource(repeat=3, level="A", size=10):
+    check_path_base()
     files = [x + 1 for x in range(len(os.listdir(f"baza/nieregularne/{level}")))]
     Files_Number = len(files)
     random_list = []
@@ -245,10 +249,15 @@ irr_m = Irregular_Menu
 
 class Dict_menu(Screen):
     def chosen_dict(self, instance):
-        sm.current = "dict_quiz"
+        print(instance.text.split()[0])
+        # sm.current = "dict_quiz"
 
     def initit_dicts_list(self):
         directory = "baza\Dictionary"
+        if os.path.exists(directory) and os.path.isdir(directory):
+            pass
+        else:
+            os.makedirs(directory)
         # Add dynamic buttons to the button_layout
         files = os.listdir(directory)
         dicts = {}
@@ -269,12 +278,33 @@ class Dict_menu(Screen):
                     value = f"{value} słowa"
                 else:
                     value = f"{value} słów"
+                boxdict = BoxLayout(
+                    orientation="horizontal",
+                    spacing=0,
+                    padding=3,
+                    size_hint=(1, None),
+                    height=40,
+                )
                 button = Button(
                     text=f"{key[:-4]} ({value})",
                     font_size=20,
                     on_release=self.chosen_dict,
+                    size_hint=(0.8, None),
+                    height=40,
                 )
-                self.ids.scroll_menu_dict.add_widget(button)
+                edit_button = Button(
+                    on_release=self.edit_button_down, size_hint=(0.1, None), height=40
+                )
+                remove_button = Button(
+                    background_normal="icons\delete_icon.png",
+                    size_hint=(0.1, None),
+                    height=40,
+                    on_release=self.remove_button_down,
+                )
+                boxdict.add_widget(button)
+                boxdict.add_widget(edit_button)
+                boxdict.add_widget(remove_button)
+                self.ids.scroll_menu_dict.add_widget(boxdict)
 
     def __init__(self, **kw):
         super().__init__(**kw)
@@ -288,6 +318,37 @@ class Dict_menu(Screen):
     def back_button_down_dict(self):
         self.parent.remove_widget(Dict_menu())
         sm.current = "menu"
+
+    def return_box_name(self, instance):
+        for child in instance.parent.children:
+            if isinstance(child, Button):
+                if len(child.text) > 0:
+                    return child.text.split()[0]
+
+    def edit_button_down(self, instance):
+        button_name = self.return_box_name(instance)
+        DmCw.resource_name = button_name
+        sm.current = "create_res"
+
+    class Remove_accept_popup(Popup):
+        pass
+
+    def yes_remove_button(self, instance):
+        print("Yes")
+
+    def remove_button_down(self, instance):
+        button_name = self.return_box_name(instance)
+        if os.path.exists(f"baza/Dictionary/{button_name}.txt"):
+            popup = Dict_menu.Remove_accept_popup(
+                title=f'Czy na pewno chcesz usunąć bazę: "{button_name}"',
+                title_align="center",
+                content=Button(text="Tak", on_release=self.yes_remove_button),
+                size_hint=(0.6, 0.13),
+                pos_hint={"center_x": 0.5, "center_y": 0.5},
+            )
+            popup.open()
+            """os.remove(f"baza/Dictionary/{button_name}.txt")
+            self.on_pre_enter()"""
 
     class Create_window_popup(Popup):
         def create_button_down(self):
@@ -327,16 +388,16 @@ class Create_window(Screen):
             orientation="horizontal", spacing=5, size_hint=(1, None), height=40
         )
         textinput1 = TextInput(
-            halign="center",
-            valign="middle",
-            font_size=20,
             text=key,
+            # halign="center",
+            # valign="middle",
+            font_size=20,
             write_tab=False,
             multiline=False,
         )
         textinput2 = TextInput(
-            halign="center",
-            valign="middle",
+            # halign="center",
+            # valign="middle",
             font_size=20,
             text=value,
             write_tab=False,
