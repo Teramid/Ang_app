@@ -31,8 +31,8 @@
             MyLabel:
                 text:"Przyswojone\npytania:"
             MyLabel:
-                id: full_correct_answer   
-                text: "" 
+                id: full_correct_answer
+                text: ""
         BoxLayout:
             orientation: 'vertical'
             spacing:1
@@ -45,6 +45,7 @@
     BoxLayout:
         size_hint: 1060/1080, 1000/1920
         pos_hint: {'x':15/1080, 'y':280/1920}
+        orientation: 'vertical'
         spacing: 20
         padding: 5, 5, 5, 5
         canvas.before:
@@ -53,6 +54,22 @@
             Rectangle:
                 size: self.width, self.height
                 pos: self.x, self.y
+        MyLabel:
+            id: dict_quest
+            text: "0"
+            font_size: 20
+            
+        TextInput:
+            id: dict_answer
+            write_tab: False
+            multiline: False
+            disabled: False
+            font_size: 20
+            halign: 'center'
+            valign: 'middle'
+        MyLabel:
+            text: "corr"
+            
 
     BackButton:
         on_press: root.back_button_down()

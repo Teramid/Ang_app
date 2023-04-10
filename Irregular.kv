@@ -31,8 +31,8 @@
             MyLabel:
                 text:"Przyswojone\npytania:"
             MyLabel:
-                id: full_correct_answer   
-                text: "" 
+                id: full_correct_answer
+                text: ""
         BoxLayout:
             orientation: 'vertical'
             spacing:1
@@ -41,7 +41,7 @@
             MyLabel:
                 id: size_base
                 text: ""
-    
+
 #Question
     BoxLayout:
         size_hint: 1050/1080, 260/1920
@@ -75,7 +75,7 @@
             halign: 'center'
             valign: 'middle'
             color: 0,0,0,1
-            
+
 #Answer Box
     BoxLayout:
         size_hint: 1060/1080, 840/1920
@@ -112,7 +112,7 @@
                 text: ''
                 opacity: 0
 
-    #Answer 2       
+    #Answer 2
         BoxLayout:
             orientation: "vertical"
             spacing: 1
@@ -165,10 +165,4 @@
         id: right_button
         background_normal: 'icons/accept_icon.png'
         background_down: 'icons/next_icon.png'
-        on_press: 
-            root.right_button_down()
-
-    
-
-
-
+        on_press: root.right_button_down()

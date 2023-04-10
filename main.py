@@ -17,6 +17,7 @@ from numpy import isin
 import ShortFun
 
 Window.size = (450, 800)
+# Window.size = (1080, 1920)
 Config.set("graphics", "resizable", False)
 
 
@@ -132,11 +133,8 @@ class Irregular(Screen):
         Correct = []
         for i, ans in enumerate(Answer):
             if (
-                ans.strip()
-                in (
-                    self.Dict[self.choose_File][i].split(", "),
-                    self.Dict[self.choose_File][i].split(),
-                )
+                ans.strip() in self.Dict[self.choose_File][i].split(", ")
+                or ans.strip() in self.Dict[self.choose_File][i].split()
                 or ans.strip() == self.Dict[self.choose_File][i]
             ):
                 Correct.append(True)
@@ -249,8 +247,8 @@ irr_m = Irregular_Menu
 
 class Dict_menu(Screen):
     def chosen_dict(self, instance):
-        print(instance.text.split()[0])
-        # sm.current = "dict_quiz"
+        Dict_menu.chos = " ".join(x for x in instance.text.split()[:-2])
+        sm.current = "dict_quiz"
 
     def initit_dicts_list(self):
         directory = "baza\Dictionary"
@@ -263,7 +261,12 @@ class Dict_menu(Screen):
         dicts = {}
         if len(files) == 0:
             empty_label = Button(
-                text=f"Brak dostępnych zasobów\nUtwórz nową bazę", font_size=20
+                text=f"Brak dostępnych zasobów\nUtwórz nową bazę",
+                font_size=20,
+                size_hint=(1, None),
+                height=100,
+                halign="center",
+                valign="middle",
             )
             self.ids.scroll_menu_dict.add_widget(empty_label)
         else:
@@ -280,7 +283,7 @@ class Dict_menu(Screen):
                     value = f"{value} słów"
                 boxdict = BoxLayout(
                     orientation="horizontal",
-                    spacing=0,
+                    spacing=3,
                     padding=3,
                     size_hint=(1, None),
                     height=40,
@@ -289,16 +292,21 @@ class Dict_menu(Screen):
                     text=f"{key[:-4]} ({value})",
                     font_size=20,
                     on_release=self.chosen_dict,
-                    size_hint=(0.8, None),
+                    size_hint=(0.9, None),
                     height=40,
                 )
                 edit_button = Button(
-                    on_release=self.edit_button_down, size_hint=(0.1, None), height=40
+                    background_normal="icons\edit_icon.png",
+                    on_release=self.edit_button_down,
+                    size_hint=(None, None),
+                    height=40,
+                    width=40,
                 )
                 remove_button = Button(
                     background_normal="icons\delete_icon.png",
-                    size_hint=(0.1, None),
+                    size_hint=(None, None),
                     height=40,
+                    width=30,
                     on_release=self.remove_button_down,
                 )
                 boxdict.add_widget(button)
@@ -323,7 +331,7 @@ class Dict_menu(Screen):
         for child in instance.parent.children:
             if isinstance(child, Button):
                 if len(child.text) > 0:
-                    return child.text.split()[0]
+                    return " ".join(x for x in child.text.split()[:-2])
 
     def edit_button_down(self, instance):
         button_name = self.return_box_name(instance)
@@ -333,20 +341,25 @@ class Dict_menu(Screen):
     class Remove_accept_popup(Popup):
         pass
 
+    def remove_file(self):
+        os.remove(f"baza/Dictionary/{self.button_name}.txt")
+        self.on_pre_enter()
+
     def yes_remove_button(self, instance):
-        print("Yes")
+        self.popup.dismiss()
+        self.remove_file()
 
     def remove_button_down(self, instance):
-        button_name = self.return_box_name(instance)
-        if os.path.exists(f"baza/Dictionary/{button_name}.txt"):
-            popup = Dict_menu.Remove_accept_popup(
-                title=f'Czy na pewno chcesz usunąć bazę: "{button_name}"',
+        self.button_name = self.return_box_name(instance)
+        if os.path.exists(f"baza/Dictionary/{self.button_name}.txt"):
+            self.popup = Dict_menu.Remove_accept_popup(
+                title=f'Czy na pewno chcesz usunąć bazę: "{self.button_name}"',
                 title_align="center",
-                content=Button(text="Tak", on_release=self.yes_remove_button),
+                content=Button(text="Tak", on_release=(self.yes_remove_button)),
                 size_hint=(0.6, 0.13),
                 pos_hint={"center_x": 0.5, "center_y": 0.5},
             )
-            popup.open()
+            self.popup.open()
             """os.remove(f"baza/Dictionary/{button_name}.txt")
             self.on_pre_enter()"""
 
@@ -371,7 +384,7 @@ class Create_window(Screen):
         )
         if os.path.exists(f"baza/Dictionary/{DmCw.resource_name}.txt"):
             with open(f"baza/Dictionary/{DmCw.resource_name}.txt", "r") as f:
-                f = [lines.strip().split() for lines in f.readlines()]
+                f = [lines.strip().split("/") for lines in f.readlines()]
             Mydict = {}
             Mydict.update({x[0]: x[1] for x in f})
             self.boxText = self.ids.add_words
@@ -428,7 +441,7 @@ class Create_window(Screen):
                 Mydict.update({minibox[1].strip(): minibox[0].strip()})
         with open(f"baza/Dictionary/{DmCw.resource_name}.txt", "w") as f:
             for key, value in Mydict.items():
-                f.write(f"{key} {value}\n")
+                f.write(f"{key.lower()}/{value.lower()}\n")
 
     def back_button_down(self):
         self.parent.remove_widget(Create_window())
@@ -450,6 +463,31 @@ class Create_window(Screen):
 
 
 class DictionaryQuiz(Screen):
+    def random_word(self):
+        while True:
+            DictionaryQuiz.choose_word = choice(list(self.repeat_dict.keys()))
+            if self.repeat_dict.get(self.choose_word) == 0:
+                continue
+            else:
+                break
+
+    def on_pre_enter(self):
+        direct = f"baza/Dictionary/{Dict_menu.chos}.txt"
+        DictionaryQuiz.dict = {}
+        DictionaryQuiz.repeat_dict = {}
+        if os.path.exists(direct):
+            with open(direct, "r") as f:
+                f = [lines.strip().split("/") for lines in f.readlines()]
+        for line in f:
+            if len(line) > 1:
+                self.dict.update({line[0]: line[1]})
+                self.repeat_dict.update({line[0]: 3})
+        self.random_word()
+        self.ids.repeat_quest.text = str(self.repeat_dict.get(self.choose_word))
+        self.ids.full_correct_answer.text = str(0)
+        self.ids.size_base.text = str(len(self.dict))
+        self.ids.dict_quest.text = self.choose_word
+
     def back_button_down(self):
         self.parent.remove_widget(DictionaryQuiz())
         sm.current = "dict_menu"

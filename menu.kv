@@ -36,7 +36,7 @@
             Rectangle:
                 size: self.width, self.height
                 pos: self.x, self.y
-        
+
         MenuButton:
             text: "Nieregularne czasowniki"
             on_release: root.button_1_down()
@@ -83,7 +83,7 @@
                 rgb: (0.4,0.4,0.4)
             Rectangle:
                 size: self.width, self.height
-                pos: self.x, self.y 
+                pos: self.x, self.y
         BoxLayout:
             orientation: "horizontal"
             spacing: 1
@@ -160,7 +160,7 @@
             font_size: 20
             size_hint: 0.9, 0.4
             pos_hint: {'center_x': 0.5}
-            on_release: 
+            on_release:
                 root.dismiss()
                 root.create_button_down()
 
@@ -218,7 +218,7 @@
             size_hint_y: None
             height:self.minimum_height
             font_size: 20
-    
+
     BackButton:
         on_press: root.back_button_down_dict()
 
@@ -234,7 +234,7 @@
         Button:
             text: "Tak"
             font_size:20
-            on_release: 
+            on_release:
                 root.dismiss()
                 root.Accept_Create_down()
         Button:
@@ -298,4 +298,4 @@
 
     RightButton:
         background_normal: 'icons/accept_icon.png'
-        on_press: on_press: Factory.Accept_Create_popup(root).open()
+        on_press: Factory.Accept_Create_popup(root).open()
