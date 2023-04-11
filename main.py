@@ -248,7 +248,10 @@ irr_m = Irregular_Menu
 class Dict_menu(Screen):
     def chosen_dict(self, instance):
         Dict_menu.chos = " ".join(x for x in instance.text.split()[:-2])
-        sm.current = "dict_quiz"
+        if self.button == "diction":
+            sm.current = "dict_quiz"
+        else:
+            print("to drugie")
 
     def initit_dicts_list(self):
         directory = "baza\Dictionary"
@@ -463,34 +466,117 @@ class Create_window(Screen):
 
 
 class DictionaryQuiz(Screen):
+    last_word = ""
+
     def random_word(self):
         while True:
             DictionaryQuiz.choose_word = choice(list(self.repeat_dict.keys()))
             if self.repeat_dict.get(self.choose_word) == 0:
                 continue
             else:
-                break
+                if self.choose_word == self.last_word and len(self.dict) > 1:
+                    continue
+                else:
+                    DictionaryQuiz.last_word = self.choose_word
+                    break
+
+    def handle_keypress(self, window, keycode, *args):
+        if isinstance(keycode, int) and keycode == 13:
+            self.right_button_down()
+
+    def set_focus_dict_answer(self, dt):
+        self.ids.dict_answer.focus = True
 
     def on_pre_enter(self):
         direct = f"baza/Dictionary/{Dict_menu.chos}.txt"
         DictionaryQuiz.dict = {}
         DictionaryQuiz.repeat_dict = {}
+        DictionaryQuiz.full_correct = 0
+        # normal state
+        self.ids.right_button.background_normal = "icons/accept_icon.png"
+        self.ids.dict_answer.disabled = False
+        self.ids.dict_answer.text = ""
+        ##############################
         if os.path.exists(direct):
             with open(direct, "r") as f:
                 f = [lines.strip().split("/") for lines in f.readlines()]
         for line in f:
             if len(line) > 1:
-                self.dict.update({line[0]: line[1]})
-                self.repeat_dict.update({line[0]: 3})
+                self.dict.update({line[1]: line[0]})
+                self.repeat_dict.update({line[1]: 1})
         self.random_word()
         self.ids.repeat_quest.text = str(self.repeat_dict.get(self.choose_word))
-        self.ids.full_correct_answer.text = str(0)
+        DictionaryQuiz.len_dict = len(self.dict)
+        self.ids.full_correct_answer.text = str(
+            f"{self.full_correct} / {self.len_dict}"
+        )
         self.ids.size_base.text = str(len(self.dict))
         self.ids.dict_quest.text = self.choose_word
+        Clock.schedule_once(self.set_focus_dict_answer, 0.2)
+        Window.bind(on_key_down=self.handle_keypress)
 
     def back_button_down(self):
         self.parent.remove_widget(DictionaryQuiz())
+        Window.unbind(on_key_down=self.handle_keypress)
         sm.current = "dict_menu"
+
+    def correct_widget(self, bool_answer):
+        if bool_answer:
+            self.ids.correct_widget_dict.text = "Correct"
+            self.ids.correct_widget_dict.opacity = 1
+            self.ids.correct_widget_dict.color = (0, 0.7, 0, 1)
+        else:
+            self.ids.correct_widget_dict.text = (
+                f'Should be "{self.dict.get(self.choose_word)}"'
+            )
+            self.ids.correct_widget_dict.opacity = 1
+            self.ids.correct_widget_dict.color = (0.7, 0, 0, 1)
+
+    def check_answer_dict(self):
+        self.ids.dict_answer.disabled = True
+        answer = self.ids.dict_answer.text
+        x = self.repeat_dict.get(self.choose_word)
+        if answer.strip() == self.dict.get(self.choose_word):
+            x -= 1
+            self.correct_widget(True)
+        else:
+            x += 1
+            self.correct_widget(False)
+        if x == 0:
+            DictionaryQuiz.dict.pop(self.choose_word)
+            DictionaryQuiz.repeat_dict.pop(self.choose_word)
+            DictionaryQuiz.full_correct += 1
+            self.ids.full_correct_answer.text = str(
+                f"{self.full_correct} / {self.len_dict}"
+            )
+        else:
+            DictionaryQuiz.repeat_dict.update({self.choose_word: x})
+
+    def accept_icon_dict(self):
+        self.check_answer_dict()
+
+    def next_icon_dict(self):
+        self.random_word()
+        self.ids.correct_widget_dict.opacity = 0
+        self.ids.dict_answer.disabled = False
+        self.ids.dict_answer.text = ""
+        self.ids.dict_quest.text = self.choose_word
+        self.ids.repeat_quest.text = str(self.repeat_dict.get(self.choose_word))
+        Clock.schedule_once(self.set_focus_dict_answer, 0.2)
+
+    def right_button_down(self):
+        if self.ids.right_button.background_normal == "icons/accept_icon.png":
+            self.accept_icon_dict()
+            self.ids.right_button.background_normal = "icons/next_icon.png"
+        else:
+            if len(self.dict) == 0:
+                sm.remove_widget(DictionaryQuiz())
+                Window.unbind(on_key_down=self.handle_keypress)
+                sm.current = "dict_menu"
+            else:
+                self.ids.right_button.background_normal = "icons/accept_icon.png"
+                self.next_icon_dict()
+            # Clock.schedule_once(self.set_focus_text_quest_1, 0.2)
 
 
 class Menu(Screen):
@@ -501,10 +587,13 @@ class Menu(Screen):
 
     def button_2_down(self):
         sm.remove_widget(Menu())
+        Dict_menu.button = "diction"
         sm.current = "dict_menu"
 
     def button_3_down(self):
-        print("button3")
+        sm.remove_widget(Menu())
+        Dict_menu.button = "fiszki"
+        sm.current = "dict_menu"
 
 
 class MenuApp(App):

@@ -43,8 +43,8 @@
                 text: ""
 
     BoxLayout:
-        size_hint: 1060/1080, 1000/1920
-        pos_hint: {'x':15/1080, 'y':280/1920}
+        size_hint: 1060/1080, 700/1920
+        pos_hint: {'x':15/1080, 'y':620/1920}
         orientation: 'vertical'
         spacing: 20
         padding: 5, 5, 5, 5
@@ -57,19 +57,26 @@
         MyLabel:
             id: dict_quest
             text: "0"
-            font_size: 20
-            
+            font_size: 30
         TextInput:
             id: dict_answer
             write_tab: False
             multiline: False
             disabled: False
-            font_size: 20
+            font_size: 30
             halign: 'center'
             valign: 'middle'
         MyLabel:
-            text: "corr"
-            
+            id: correct_widget_dict
+            text: ""
+            font_size: 25
+            opacity: 0
 
     BackButton:
         on_press: root.back_button_down()
+
+    RightButton:
+        id: right_button
+        background_normal: 'icons/accept_icon.png'
+        background_down: 'icons/next_icon.png'
+        on_press: root.right_button_down()
