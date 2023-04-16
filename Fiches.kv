@@ -1,0 +1,91 @@
+<Fiches>:
+    canvas.before:
+        Color:
+            rgb: (0.3, 0.3,0.3)
+        Rectangle:
+            size: self.width, self.height
+            pos: self.x, self.y
+    BoxLayout:
+        size_hint: 1060/1080, 280/1920
+        pos_hint: {'x':15/1080, 'y':1580/1920}
+        spacing: 20
+        padding: 5, 5, 5, 5
+        canvas.before:
+            Color:
+                rgb: (0.4,0.4,0.4)
+            Rectangle:
+                size: self.width, self.height
+                pos: self.x, self.y
+        BoxLayout:
+            orientation: 'vertical'
+            spacing:1
+            MyLabel:
+                text:"Aktualna fiszka"
+                font_size: 20
+            MyLabel:
+                id: fiche_number
+                text: ""
+                font_size: 20
+        BoxLayout:
+            orientation: 'vertical'
+            spacing:1
+            MyLabel:
+                text: "Liczba fiszek"
+                font_size: 20
+            MyLabel:
+                id: size_base
+                text: ""
+                font_size: 20
+
+    BoxLayout:
+        size_hint: 1060/1080, 850/1920
+        id: box_dict
+        pos_hint: {'center_x':0.5, 'y':470/1920}
+        orientation: 'vertical'
+        spacing: 10
+        padding: 5, 5, 5, 5
+        canvas.before:
+            Color:
+                rgb: (0.4,0.4,0.4)
+            Rectangle:
+                size: self.width, self.height
+                pos: self.x, self.y
+        Button:
+            pos_hint: {'center_x':0.5, 'y':0.2}
+            id: fiche_word
+            on_press: root.turn_fiche()
+            text: ""
+            font_size: 30
+        BoxLayout:
+            size_hint_y: 0.2
+            orientation: 'horizontal'
+            spacing: 30
+            padding: 40, 0, 40, 0
+            Button:
+                id:previous_fiche
+                on_release: root.previous_fiche_button()
+                disabled: True
+                Image:
+                    source: 'icons/back_icon.png'
+                    size: self.parent.size
+                    pos: (self.parent.center_x - self.width/2, self.parent.center_y - self.height/2)
+            Button:
+                id: speaker_fiche
+                on_release: root.speaker_fiche_button()
+                disabled: True
+                Image:
+                    source: 'icons/speaker_icon.png'
+                    size: self.parent.size
+                    pos: (self.parent.center_x - self.width/2, self.parent.center_y - self.height/2)
+            Button:
+                id:next_fiche
+                on_release: root.next_fiche_button()
+                disabled: False
+                Image:
+                    source: 'icons/next_icon.png'
+                    size: self.parent.size
+                    pos: (self.parent.center_x - self.width/2, self.parent.center_y - self.height/2)
+                
+
+    BackButton:
+        on_press:root.back_button_down()

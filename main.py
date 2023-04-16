@@ -1,8 +1,7 @@
 import os
-from msilib.schema import Directory
 from random import choice, randint, random
-from tkinter import Label
 
+import pyttsx3
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.config import Config
@@ -12,7 +11,6 @@ from kivy.uix.button import Button
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import Screen, ScreenManager, SlideTransition
 from kivy.uix.textinput import TextInput
-from numpy import isin
 
 import ShortFun
 
@@ -245,13 +243,14 @@ class Irregular_Menu(Screen):
 irr_m = Irregular_Menu
 
 
+# menu for DictionaryQuiz and Fiches
 class Dict_menu(Screen):
     def chosen_dict(self, instance):
         Dict_menu.chos = " ".join(x for x in instance.text.split()[:-2])
         if self.button == "diction":
             sm.current = "dict_quiz"
         else:
-            print("to drugie")
+            sm.current = "fiches"
 
     def initit_dicts_list(self):
         directory = "baza\Dictionary"
@@ -496,6 +495,7 @@ class DictionaryQuiz(Screen):
         self.ids.right_button.background_normal = "icons/accept_icon.png"
         self.ids.dict_answer.disabled = False
         self.ids.dict_answer.text = ""
+        self.ids.correct_widget_dict.opacity = 0
         ##############################
         if os.path.exists(direct):
             with open(direct, "r") as f:
@@ -534,7 +534,7 @@ class DictionaryQuiz(Screen):
 
     def check_answer_dict(self):
         self.ids.dict_answer.disabled = True
-        answer = self.ids.dict_answer.text
+        answer = self.ids.dict_answer.text.lower()
         x = self.repeat_dict.get(self.choose_word)
         if answer.strip() == self.dict.get(self.choose_word):
             x -= 1
@@ -579,6 +579,75 @@ class DictionaryQuiz(Screen):
             # Clock.schedule_once(self.set_focus_text_quest_1, 0.2)
 
 
+class Fiches(Screen):
+    dict = {}
+    number_fiche = 1
+
+    def on_pre_enter(self):
+        direct = f"baza/Dictionary/{Dict_menu.chos}.txt"
+        self.number_fiche = 1
+        self.dict = {}
+        if os.path.exists(direct):
+            with open(direct, "r") as f:
+                f = [lines.strip().split("/") for lines in f.readlines()]
+        for nr, line in enumerate(f):
+            if len(line) > 1:
+                self.dict.update({nr + 1: [line[1], line[0]]})
+        self.ids.size_base.text = str(len(self.dict))
+        self.ids.fiche_number.text = str(self.number_fiche)
+        self.ids.fiche_word.text = self.dict[self.number_fiche][0]
+        self.ids.speaker_fiche.disabled = True
+        self.ids.previous_fiche.disabled = True
+
+    def speaker_fiche_button(self):
+        self.ids.speaker_fiche.disabled = True
+        self.ids.fiche_word.disabled = True
+        text = self.ids.fiche_word.text
+        engine = pyttsx3.init()
+        voices = engine.getProperty("voices")
+        engine.setProperty("voice", voices[1].id)
+        engine.setProperty("language", "en-uk")
+        engine.setProperty("rate", 150)
+        engine.setProperty("volume", 0.5)
+        engine.say(text)
+        engine.runAndWait()
+        del engine
+        self.ids.speaker_fiche.disabled = False
+        self.ids.fiche_word.disabled = False
+
+    def turn_fiche(self):
+        if self.ids.fiche_word.text == self.dict[self.number_fiche][0]:
+            self.ids.fiche_word.text = self.dict[self.number_fiche][1]
+            self.ids.speaker_fiche.disabled = False
+
+        else:
+            self.ids.fiche_word.text = self.dict[self.number_fiche][0]
+            self.ids.speaker_fiche.disabled = True
+
+    def change_fiche(self, number):
+        self.ids.speaker_fiche.disabled = True
+        self.number_fiche += number
+        if self.number_fiche == 1:
+            self.ids.previous_fiche.disabled = True
+        elif self.number_fiche == len(self.dict):
+            self.ids.next_fiche.disabled = True
+        else:
+            self.ids.previous_fiche.disabled = False
+            self.ids.next_fiche.disabled = False
+        self.ids.fiche_number.text = str(self.number_fiche)
+        self.ids.fiche_word.text = self.dict[self.number_fiche][0]
+
+    def next_fiche_button(self):
+        self.change_fiche(1)
+
+    def previous_fiche_button(self):
+        self.change_fiche(-1)
+
+    def back_button_down(self):
+        self.parent.remove_widget(Fiches())
+        sm.current = "dict_menu"
+
+
 class Menu(Screen):
     def button_1_down(self):
         sm.remove_widget(Menu())
@@ -608,6 +677,7 @@ class MenuApp(App):
         sm.add_widget(Dict_menu(name="dict_menu"))
         sm.add_widget(Create_window(name="create_res"))
         sm.add_widget(DictionaryQuiz(name="dict_quiz"))
+        sm.add_widget(Fiches(name="fiches"))
         return sm
 
 

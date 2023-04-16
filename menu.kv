@@ -2,6 +2,7 @@
 #: include Finish_Window.kv
 #: include ShortFun.kv
 #: include DictionaryQuiz.kv
+#: include Fiches.kv
 #: import Factory kivy.factory.Factory
 <Menu>:
     canvas.before:
@@ -17,7 +18,7 @@
         halign: 'center'
         valign: 'middle'
         size_hint: 1060/1080, 280/1920
-        pos_hint: {'x':15/1080, 'y':1580/1920}
+        pos_hint: {'center_x':0.5, 'y':1580/1920}
         canvas.before:
             Color:
                 rgb: (0.4,0.4,0.4)
@@ -26,7 +27,7 @@
                 pos: self.x, self.y
     BoxLayout:
         size_hint: 1060/1080, 1240/1920
-        pos_hint: {'x':15/1080, 'y':300/1920}
+        pos_hint: {'center_x':0.5, 'y':300/1920}
         orientation: "vertical"
         spacing: 1
         padding: 5, 5, 5, 5
@@ -39,14 +40,17 @@
 
         MenuButton:
             text: "Nieregularne czasowniki"
+            font_size: 30
             on_release: root.button_1_down()
 
         MenuButton:
             text: "Słówka"
+            font_size: 30
             on_release: root.button_2_down()
 
         MenuButton:
             text: "Fiszki"
+            font_size: 30
             on_release: root.button_3_down()
 
 
@@ -65,7 +69,7 @@
         halign: 'center'
         valign: 'middle'
         size_hint: 1060/1080, 280/1920
-        pos_hint: {'x':15/1080, 'y':1580/1920}
+        pos_hint: {'center_x':0.5, 'y':1580/1920}
         canvas.before:
             Color:
                 rgb: (0.4,0.4,0.4)
@@ -74,7 +78,7 @@
                 pos: self.x, self.y
     BoxLayout:
         size_hint: 1060/1080, 1240/1920
-        pos_hint: {'x':15/1080, 'y':300/1920}
+        pos_hint: {'center_x':0.5, 'y':300/1920}
         orientation: "vertical"
         spacing: 1
         padding: 5, 5, 5, 5
@@ -180,7 +184,7 @@
         halign: 'center'
         valign: 'middle'
         size_hint: 1060/1080, 280/1920
-        pos_hint: {'x':15/1080, 'y':1580/1920}
+        pos_hint: {'center_x':0.5, 'y':1580/1920}
         canvas.before:
             Color:
                 rgb: (0.4,0.4,0.4)
@@ -189,7 +193,7 @@
                 pos: self.x, self.y
     BoxLayout:
         size_hint: 1060/1080, 200/1920
-        pos_hint: {'x': 15/1080, 'y':1340/1920}
+        pos_hint: {'center_x':0.5, 'y':1340/1920}
         padding: 10
         spacing: 10
         canvas.before:
@@ -207,7 +211,7 @@
 
     ScrollView:
         size_hint: 1060/1080, 1000/1920
-        pos_hint: {'x':15/1080, 'y':300/1920}
+        pos_hint: {'center_x':0.5, 'y':300/1920}
         do_scroll_y: True
         do_scroll_x: False
         BoxLayout:
@@ -256,7 +260,7 @@
         halign: 'center'
         valign: 'middle'
         size_hint: 1060/1080, 280/1920
-        pos_hint: {'x':15/1080, 'y':1580/1920}
+        pos_hint: {'center_x':0.5, 'y':1580/1920}
         canvas.before:
             Color:
                 rgb: (0.4,0.4,0.4)
@@ -265,7 +269,7 @@
                 pos: self.x, self.y
     BoxLayout:
         size_hint: 1060/1080, 80/1920
-        pos_hint: {'x': 15/1080, 'y':1440/1920}
+        pos_hint: {'center_x':0.5, 'y':1440/1920}
         padding: 10
         spacing: 10
         canvas.before:
@@ -282,7 +286,7 @@
             font_size: 20
     ScrollView:
         size_hint: 1060/1080, 1100/1920
-        pos_hint: {'x':15/1080, 'y':300/1920}
+        pos_hint: {'center_x':0.5, 'y':300/1920}
         do_scroll_y: True
         do_scroll_x: False
         BoxLayout:
