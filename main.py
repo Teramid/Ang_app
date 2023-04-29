@@ -1,5 +1,5 @@
 import os
-from random import choice, randint, random
+from random import choice
 
 import pyttsx3
 from kivy.app import App
@@ -9,7 +9,7 @@ from kivy.core.window import Window
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.popup import Popup
-from kivy.uix.screenmanager import Screen, ScreenManager, SlideTransition
+from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.uix.textinput import TextInput
 
 import ShortFun
@@ -20,96 +20,125 @@ Config.set("graphics", "resizable", False)
 
 
 def download_verb_list():
-    import git
+    from urllib.request import urlopen
+    from bs4 import BeautifulSoup
 
-    if not os.path.exists(f"baza"):
-        os.makedirs(f"baza")
-    else:
-        pass
-    git_url = "https://github.com/Teramid/Baza.git"
-    repo_dir = "baza"
-    git.Repo.clone_from(git_url, repo_dir)
+    html = "https://www.ang.pl/gramatyka/czasowniki-verbs/czasowniki-nieregularne"
+    req = urlopen(html)
 
+    soup = BeautifulSoup(req.read(), "html5lib")
 
-# checking path and base exist, if not download
-def check_path_base():
-    level_verbs = ["A", "B", "C"]
-    for level in level_verbs:
-        if os.path.exists(f"baza/nieregularne/{level}") and os.path.isdir(
-            f"baza/nieregularne/{level}"
-        ):
+    words = soup.find_all(class_=["ang", "pol"])
+    word_list = []
+    for x in words:
+        word_list.append(x.get_text())
+        try:
+            word_list.remove("przykłady »\n\t\t\twzory odmian »")
+        except:
             pass
+
+    verb_irr = [[], [], []]
+    level = 0
+    for nr, word in enumerate(word_list):
+        if word[0:4] == "play":
+            list = [x for x in word]
+            word = "".join(x for x in list[4:])
+            word_list[nr] = word
+        if word_list[nr] == "awake":
+            level = 1
+        elif word_list[nr] == "arise":
+            level = 2
         else:
-            download_verb_list()
-
-
-# Create verbs resource to learn with the selected repetition, level and size
-def make_verbs_resource(repeat=3, level="A", size=10):
-    check_path_base()
-    files = [x + 1 for x in range(len(os.listdir(f"baza/nieregularne/{level}")))]
-    Files_Number = len(files)
-    random_list = []
-    size = Files_Number if size > Files_Number else size
-    while len(random_list) < size:
-        x = choice(files)
-        random_list.append(x)
-        files.remove(x)
-    ir.Dict = {}
-    ir.Dict_Repeat = {}
-    for i in random_list:
-        file_name = f"baza/nieregularne/{level}/{str(i).zfill(3)}.txt"
-        with open(file_name, "r") as f:
-            f = f.readlines()
-            if len(f[3].split(", ")) > 3:
-                list = f[3].split(", ")
-                list[3] = "\n" + list[3]
-                f[3] = ", ".join(verb for verb in list)
-            ir.Dict.update({i: [f[0].rstrip(), f[1].rstrip(), f[2].rstrip(), f[3]]})
-        ir.Dict_Repeat.update({i: repeat})
-    return ir.Dict, ir.Dict_Repeat
-
-
-def random_verb(dictNumber, last_File):
-    while True:
-        ir.choose_File = choice(list(dictNumber.keys()))
-        if dictNumber.get(ir.choose_File) == 0:
-            continue
-        else:
-            if ir.choose_File == last_File and len(dictNumber) > 1:
-                continue
+            pass
+        if (nr + 1) % 4 == 0:
+            verb_irr[level].append(
+                [word_list[nr - 3], word_list[nr - 2], word_list[nr - 1], word_list[nr]]
+            )
+    level_verbs = "A"
+    for verb_list in verb_irr:
+        for nr, verb in enumerate(verb_list):
+            x = verb[0].split()
+            if x[0] == "awake":
+                level_verbs = "B"
+            elif x[0] == "arise":
+                level_verbs = "C"
             else:
-                break
+                pass
+            nameFile = ""
+            numberFile = nr + 1
+            if numberFile < 10:
+                nameFile = "00" + str(numberFile) + ".txt"
+            elif numberFile >= 0 and numberFile < 100:
+                nameFile = "0" + str(numberFile) + ".txt"
+            else:
+                nameFile = str(numberFile) + ".txt"
+            nameFile = f"baza/nieregularne/{level_verbs}/{nameFile}"
+            if not os.path.exists(f"baza/nieregularne/{level_verbs}"):
+                os.makedirs(f"baza/nieregularne/{level_verbs}")
+            else:
+                pass
+            with open(nameFile, "w") as f:
+                f.write("\n".join(x for x in verb))
+    # print("Pobrano", len(verb_irr), "czasowników")
 
 
 class Irregular(Screen):
     Full_Answer = 0
     Size_Dict = 0
 
-    def initialization(self):
-        random_verb(self.Dict_Repeat, 0)
-        self.ids.quest_0.text = self.Dict[self.choose_File][3]
-        self.ids.full_correct_answer.text = f"{self.Full_Answer} / {self.Size_Dict}"
-        self.ids.repeat_quest.text = str(self.Dict_Repeat.get(self.choose_File))
+    def random_verb(self, last_File):
+        while True:
+            Irregular.choose_File = choice(list(self.Dict_Repeat.keys()))
+            if self.Dict_Repeat.get(ir.choose_File) == 0:
+                continue
+            else:
+                if self.choose_File == last_File and len(self.Dict_Repeat) > 1:
+                    continue
+                else:
+                    break
+
+    def make_verbs_resource(self, repeat, level, size):
+        files = [x + 1 for x in range(len(os.listdir(f"baza/nieregularne/{level}")))]
+        Files_Number = len(files)
+        random_list = []
+        size = Files_Number if size > Files_Number else size
+        while len(random_list) < size:
+            x = choice(files)
+            random_list.append(x)
+            files.remove(x)
+        Irregular.Dict = {}
+        Irregular.Dict_Repeat = {}
+        for i in random_list:
+            file_name = f"baza/nieregularne/{level}/{str(i).zfill(3)}.txt"
+            with open(file_name, "r") as f:
+                f = f.readlines()
+                if len(f[3].split(", ")) > 3:
+                    list = f[3].split(", ")
+                    list[3] = "\n" + list[3]
+                    f[3] = ", ".join(verb for verb in list)
+                Irregular.Dict.update(
+                    {i: [f[0].rstrip(), f[1].rstrip(), f[2].rstrip(), f[3]]}
+                )
+            Irregular.Dict_Repeat.update({i: repeat})
 
     def set_focus_text_quest_1(self, dt):
         self.ids.text_quest_1.focus = True
-
-    def __init__(self, **kw):
-        make_verbs_resource()
-        super(Irregular, self).__init__(**kw)
 
     def handle_keypress(self, window, keycode, *args):
         if isinstance(keycode, int) and keycode == 13:
             self.right_button_down()
 
     def on_pre_enter(self, *args):
-        make_verbs_resource(irr_m.repeat, irr_m.lvl, irr_m.size_base)
+        self.make_verbs_resource(irr_m.repeat, irr_m.lvl, irr_m.size_base)
         ir.Size_Dict = len(self.Dict)
         self.ids.size_base.text = str(self.Size_Dict)
         self.ids.right_button.background_normal = "icons/accept_icon.png"
         ir.Full_Answer = 0
         self.normal_state()
-        self.initialization()
+        self.random_verb(0)
+        self.ids.quest_0.text = self.Dict[self.choose_File][3]
+        self.ids.full_correct_answer.text = f"{self.Full_Answer} / {self.Size_Dict}"
+        self.ids.repeat_quest.text = str(self.Dict_Repeat.get(self.choose_File))
         Clock.schedule_once(self.set_focus_text_quest_1, 0.2)
         Window.bind(on_key_down=self.handle_keypress)
 
@@ -180,7 +209,7 @@ class Irregular(Screen):
 
     def next_icon(self):
         self.normal_state()
-        random_verb(self.Dict_Repeat, self.choose_File)
+        self.random_verb(self.choose_File)
         self.ids.quest_0.text = self.Dict[self.choose_File][3]
         self.ids.repeat_quest.text = str(self.Dict_Repeat.get(self.choose_File))
 
@@ -207,10 +236,21 @@ class Finish_Window(Screen):
 
 
 class Irregular_Menu(Screen):
+    def check_path_base(self):
+        level_verbs = ["A", "B", "C"]
+        for level in level_verbs:
+            if os.path.exists(f"baza/nieregularne/{level}") and os.path.isdir(
+                f"baza/nieregularne/{level}"
+            ):
+                pass
+            else:
+                download_verb_list()
+
     def __init__(self, **kw):
         super().__init__(**kw)
 
     def on_pre_enter(self, *args):
+        self.check_path_base()
         self.ids.text_repeat.text = str(3)
         self.ids.text_size_dict.text = str(10)
 
