@@ -18,6 +18,12 @@ Window.size = (450, 800)
 # Window.size = (1080, 1920)
 Config.set("graphics", "resizable", False)
 
+#File source
+current_file = __file__
+current_path = os.path.abspath(current_file)
+current_path=current_path.split("\\")
+current_path = "/".join(x for x in current_path[0:len(current_path)-1])
+Unregular_source = f"{current_path}/baza/nieregularne/"
 
 def download_verb_list():
     from urllib.request import urlopen
@@ -72,9 +78,9 @@ def download_verb_list():
                 nameFile = "0" + str(numberFile) + ".txt"
             else:
                 nameFile = str(numberFile) + ".txt"
-            nameFile = f"baza/nieregularne/{level_verbs}/{nameFile}"
-            if not os.path.exists(f"baza/nieregularne/{level_verbs}"):
-                os.makedirs(f"baza/nieregularne/{level_verbs}")
+            nameFile = f"{Unregular_source}{level_verbs}/{nameFile}"
+            if not os.path.exists(f"{Unregular_source}{level_verbs}"):
+                os.makedirs(f"{Unregular_source}{level_verbs}")
             else:
                 pass
             with open(nameFile, "w") as f:
@@ -98,7 +104,7 @@ class Irregular(Screen):
                     break
 
     def make_verbs_resource(self, repeat, level, size):
-        files = [x + 1 for x in range(len(os.listdir(f"baza/nieregularne/{level}")))]
+        files = [x + 1 for x in range(len(os.listdir(f"{Unregular_source}{level}")))]
         Files_Number = len(files)
         random_list = []
         size = Files_Number if size > Files_Number else size
@@ -109,7 +115,7 @@ class Irregular(Screen):
         Irregular.Dict = {}
         Irregular.Dict_Repeat = {}
         for i in random_list:
-            file_name = f"baza/nieregularne/{level}/{str(i).zfill(3)}.txt"
+            file_name = f"{Unregular_source}{level}/{str(i).zfill(3)}.txt"
             with open(file_name, "r") as f:
                 f = f.readlines()
                 if len(f[3].split(", ")) > 3:
@@ -239,8 +245,8 @@ class Irregular_Menu(Screen):
     def check_path_base(self):
         level_verbs = ["A", "B", "C"]
         for level in level_verbs:
-            if os.path.exists(f"baza/nieregularne/{level}") and os.path.isdir(
-                f"baza/nieregularne/{level}"
+            if os.path.exists(f"{Unregular_source}{level}") and os.path.isdir(
+                f"{Unregular_source}{level}"
             ):
                 pass
             else:
@@ -293,7 +299,7 @@ class Dict_menu(Screen):
             sm.current = "fiches"
 
     def initit_dicts_list(self):
-        directory = "baza\Dictionary"
+        directory = f"{current_path}/baza/Dictionary"
         if os.path.exists(directory) and os.path.isdir(directory):
             pass
         else:
@@ -384,7 +390,7 @@ class Dict_menu(Screen):
         pass
 
     def remove_file(self):
-        os.remove(f"baza/Dictionary/{self.button_name}.txt")
+        os.remove(f"{current_path}/baza/Dictionary/{self.button_name}.txt")
         self.on_pre_enter()
 
     def yes_remove_button(self, instance):
@@ -393,7 +399,7 @@ class Dict_menu(Screen):
 
     def remove_button_down(self, instance):
         self.button_name = self.return_box_name(instance)
-        if os.path.exists(f"baza/Dictionary/{self.button_name}.txt"):
+        if os.path.exists(f"{current_path}/baza/Dictionary/{self.button_name}.txt"):
             self.popup = Dict_menu.Remove_accept_popup(
                 title=f'Czy na pewno chcesz usunąć bazę: "{self.button_name}"',
                 title_align="center",
@@ -402,8 +408,7 @@ class Dict_menu(Screen):
                 pos_hint={"center_x": 0.5, "center_y": 0.5},
             )
             self.popup.open()
-            """os.remove(f"baza/Dictionary/{button_name}.txt")
-            self.on_pre_enter()"""
+            
 
     class Create_window_popup(Popup):
         def create_button_down(self):
@@ -424,8 +429,8 @@ class Create_window(Screen):
         self.ids.create_text_box.text = (
             f'Dodaj wyrażenia do bazy\n"{DmCw.resource_name}"'
         )
-        if os.path.exists(f"baza/Dictionary/{DmCw.resource_name}.txt"):
-            with open(f"baza/Dictionary/{DmCw.resource_name}.txt", "r") as f:
+        if os.path.exists(f"{current_path}/baza/Dictionary/{DmCw.resource_name}.txt"):
+            with open(f"{current_path}/baza/Dictionary/{DmCw.resource_name}.txt", "r") as f:
                 f = [lines.strip().split("/") for lines in f.readlines()]
             Mydict = {}
             Mydict.update({x[0]: x[1] for x in f})
@@ -481,7 +486,7 @@ class Create_window(Screen):
                     minibox.append(text_input.text)
             if len(minibox) > 1:
                 Mydict.update({minibox[1].strip(): minibox[0].strip()})
-        with open(f"baza/Dictionary/{DmCw.resource_name}.txt", "w") as f:
+        with open(f"{current_path}/baza/Dictionary/{DmCw.resource_name}.txt", "w") as f:
             for key, value in Mydict.items():
                 f.write(f"{key.lower()}/{value.lower()}\n")
 
@@ -527,7 +532,7 @@ class DictionaryQuiz(Screen):
         self.ids.dict_answer.focus = True
 
     def on_pre_enter(self):
-        direct = f"baza/Dictionary/{Dict_menu.chos}.txt"
+        direct = f"{current_path}/baza/Dictionary/{Dict_menu.chos}.txt"
         DictionaryQuiz.dict = {}
         DictionaryQuiz.repeat_dict = {}
         DictionaryQuiz.full_correct = 0
@@ -624,7 +629,7 @@ class Fiches(Screen):
     number_fiche = 1
 
     def on_pre_enter(self):
-        direct = f"baza/Dictionary/{Dict_menu.chos}.txt"
+        direct = f"{current_path}/baza/Dictionary/{Dict_menu.chos}.txt"
         self.number_fiche = 1
         self.dict = {}
         if os.path.exists(direct):
